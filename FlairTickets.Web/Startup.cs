@@ -1,6 +1,9 @@
 using FlairTickets.Web.Data;
+using FlairTickets.Web.Data.Entities;
+using FlairTickets.Web.Helpers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -20,10 +23,22 @@ namespace FlairTickets.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddIdentity<User, IdentityRole>(cfg =>
+            {
+                cfg.User.RequireUniqueEmail = true;
+                cfg.Password.RequireDigit = true;
+                cfg.Password.RequireLowercase = true;
+                cfg.Password.RequireNonAlphanumeric = true;
+                cfg.Password.RequireUppercase = true;
+                cfg.Password.RequiredLength = 8;
+                cfg.Password.RequiredUniqueChars = 8;
+            }).AddEntityFrameworkStores<DataContext>();
+
             services.AddDbContext<DataContext>(
                 cfg => cfg.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddTransient<SeedDb>();
+            services.AddScoped<IUserHelper, UserHelper>();
 
             services.AddControllersWithViews();
         }
@@ -46,6 +61,7 @@ namespace FlairTickets.Web
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

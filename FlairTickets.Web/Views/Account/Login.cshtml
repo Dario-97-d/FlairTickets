@@ -1,0 +1,51 @@
+﻿@model FlairTickets.Web.Models.Account.LoginViewModel
+@{
+    ViewData["Title"] = "Login";
+}
+
+<h2>Login</h2>
+
+<div class="row">
+    <div class="col-md-4 offset-md-4">
+        <form method="POST">
+            <div asp-validation-summary="ModelOnly"></div>
+
+
+            <!-- Email -->
+            <div class="form-group">
+                <label asp-for="Email">Email</label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+
+            <!-- Password -->
+            <div class="form-group">
+                <label asp-for="Password">Password</label>
+                <input asp-for="Password" type="password" class="form-control" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+
+            <!-- Remember Me? -->
+            <div class="form-group">
+                <div class="form-check">
+                    <input asp-for="RememberMe" type="checkbox" class="form-check-input" />
+                    <label asp-for="RememberMe" class="form-check-label"></label>
+                </div>
+                <span asp-validation-for="RememberMe" class="text-danger"></span>
+            </div>
+
+
+            <!-- Submit __ Sign up -->
+            <div class="form-group">
+                <input type="submit" value="Login" class="btn btn-success" />
+                <a asp-action="Register" asp-route-ReturnUrl="@Context.Request.Query["ReturnUrl"]" class="btn btn-primary">Sign up</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts{
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

@@ -1,0 +1,93 @@
+﻿@model FlairTickets.Web.Models.Account.RegisterViewModel
+@{
+    ViewData["Title"] = "Register";
+}
+
+<h2>Register</h2>
+
+<form method="POST">
+    <div asp-validation-summary="ModelOnly"></div>
+
+    <div class="row">
+
+        <div class="col-md-3 offset-md-3">
+
+            <!-- Chosen Name -->
+            <div class="form-group">
+                <label asp-for="ChosenName">@Html.DisplayNameFor(model => model.ChosenName)</label>
+                <input asp-for="ChosenName" class="form-control" />
+                <span asp-validation-for="ChosenName" class="text-danger"></span>
+            </div>
+
+            <!-- Full Name -->
+            <div class="form-group">
+                <label asp-for="FullName">@Html.DisplayNameFor(model => model.FullName)</label>
+                <input asp-for="FullName" class="form-control" />
+                <span asp-validation-for="FullName" class="text-danger"></span>
+            </div>
+
+            <!-- Document -->
+            <div class="form-group">
+                <label asp-for="Document">@Html.DisplayNameFor(model => model.Document)</label>
+                <input asp-for="Document" class="form-control" />
+                <span asp-validation-for="Document" class="text-danger"></span>
+            </div>
+
+            <!-- Address -->
+            <div class="form-group">
+                <label asp-for="Address">@Html.DisplayNameFor(model => model.Address)</label>
+                <input asp-for="Address" class="form-control" />
+                <span asp-validation-for="Address" class="text-danger"></span>
+            </div>
+
+        </div>
+
+        <div class="col-md-3">
+
+            <!-- Phone number -->
+            <div class="form-group">
+                <label asp-for="PhoneNumber">@Html.DisplayNameFor(model => model.PhoneNumber)</label>
+                <input asp-for="PhoneNumber" class="form-control" />
+                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+            </div>
+
+            <!-- Email -->
+            <div class="form-group">
+                <label asp-for="Email">@Html.DisplayNameFor(model => model.Email)</label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+
+            <!-- Password -->
+            <div class="form-group">
+                <label asp-for="Password">@Html.DisplayNameFor(model => model.Password)</label>
+                <input asp-for="Password" type="password" class="form-control" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+
+            <!-- Confirm Password -->
+            <div class="form-group">
+                <label asp-for="ConfirmPassword">@Html.DisplayNameFor(model => model.ConfirmPassword)</label>
+                <input asp-for="ConfirmPassword" type="password" class="form-control" />
+                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+            </div>
+
+        </div>
+    </div>
+
+    <center>
+        <!-- Sign up __ Login -->
+        <div class="form-group">
+            <a asp-action="Login" class="btn btn-success">Back to Login</a>
+            <input type="submit" value="Sign up" class="btn btn-primary" />
+        </div>
+    </center>
+
+</form>
+
+
+@section Scripts{
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
