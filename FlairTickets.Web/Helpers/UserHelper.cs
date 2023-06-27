@@ -22,6 +22,20 @@ namespace FlairTickets.Web.Helpers
             return await _userManager.CreateAsync(user, password);
         }
 
+        public async Task<IdentityResult> ChangePasswordAsync(string email, ChangePasswordViewModel model)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user != null)
+            {
+                return await _userManager.ChangePasswordAsync(
+                    user,
+                    model.OldPassword,
+                    model.NewPassword);
+            }
+
+            return IdentityResult.Failed();
+        }
+
         public async Task<User> GetUserByEmailAsync(string email)
         {
             return await _userManager.FindByEmailAsync(email);
@@ -29,7 +43,7 @@ namespace FlairTickets.Web.Helpers
 
         public async Task<SignInResult> LoginAsync(LoginViewModel model)
         {
-            var user = await GetUserByEmailAsync(model.Email);
+            var user = await _userManager.FindByEmailAsync(model.Email);
             if (user != null)
             {
                 return await _signInManager.PasswordSignInAsync(
@@ -38,12 +52,30 @@ namespace FlairTickets.Web.Helpers
                     model.RememberMe,
                     false);
             }
-            else return SignInResult.Failed;
+            
+            return SignInResult.Failed;
         }
 
         public async Task LogoutAsync()
         {
             await _signInManager.SignOutAsync();
+        }
+
+        public async Task<IdentityResult> UpdateUserAsync(string userName, UpdateUserViewModel model)
+        {
+            var user = await _userManager.FindByEmailAsync(userName);
+            if (user != null)
+            {
+                user.ChosenName = model.ChosenName;
+                user.FullName = model.FullName;
+                user.Document = model.Document;
+                user.Address = model.Address;
+                user.PhoneNumber = model.PhoneNumber;
+
+                return await _userManager.UpdateAsync(user);
+            }
+
+            return IdentityResult.Failed();
         }
     }
 }

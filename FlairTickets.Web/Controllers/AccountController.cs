@@ -2,6 +2,7 @@
 using FlairTickets.Web.Data.Entities;
 using FlairTickets.Web.Helpers;
 using FlairTickets.Web.Models.Account;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FlairTickets.Web.Controllers
@@ -15,6 +16,54 @@ namespace FlairTickets.Web.Controllers
             _userHelper = userHelper;
         }
 
+
+        [Authorize]
+        public IActionResult ChangePassword()
+        {
+            return View();
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var changePassword = await _userHelper.ChangePasswordAsync(
+                    User.Identity.Name,
+                    model);
+
+                if (changePassword.Succeeded)
+                {
+                    ViewBag.UserMessage = "Password updated!";
+                    return View();
+                }
+            }
+
+            ModelState.AddModelError(string.Empty, "Could not update password.");
+            return View();
+        }
+
+        [Authorize]
+        public async Task<IActionResult> Index()
+        {
+            var user = await _userHelper.GetUserByEmailAsync(User.Identity.Name);
+            if (user != null)
+            {
+                var model = new UpdateUserViewModel
+                {
+                    ChosenName = user.ChosenName,
+                    FullName = user.FullName,
+                    Document = user.Document,
+                    Address = user.Address,
+                    PhoneNumber = user.PhoneNumber
+                };
+
+                return View(model);
+            }
+
+            return View();
+        }
 
         public IActionResult Login()
         {
@@ -49,10 +98,9 @@ namespace FlairTickets.Web.Controllers
 
         public async Task<IActionResult> Logout()
         {
-            if (!User.Identity.IsAuthenticated)
-                return RedirectToHomePage();
+            if (User.Identity.IsAuthenticated)
+                await _userHelper.LogoutAsync();
 
-            await _userHelper.LogoutAsync();
             return RedirectToHomePage();
         }
 
@@ -106,10 +154,28 @@ namespace FlairTickets.Web.Controllers
             return View();
         }
 
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> UpdateUser(UpdateUserViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var updateUser = await _userHelper.UpdateUserAsync(User.Identity.Name, model);
+                if (updateUser.Succeeded)
+                {
+                    ViewBag.UserMessage = "The account details were updated.";
+                    return View(nameof(Index));
+                }
+            }
+
+            ModelState.AddModelError(string.Empty, "Could not update account details.");
+            return View(nameof(Index));
+        }
+
 
         public IActionResult RedirectToHomePage()
         {
-            return RedirectToAction("Index", "Home");
+            return Redirect("/Home");
         }
     }
 }

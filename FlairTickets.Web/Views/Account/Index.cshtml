@@ -1,0 +1,65 @@
+﻿@model FlairTickets.Web.Models.Account.UpdateUserViewModel
+@{
+    ViewData["Title"] = "Account details";
+}
+
+<h2>Account details</h2>
+
+<div class="row">
+    <div class="col-md-6 offset-md-3">
+        <form method="POST">
+
+            <div asp-validation-summary="ModelOnly"></div>
+
+            <!-- Chosen Name -->
+            <div class="form-group">
+                <label asp-for="ChosenName">@Html.DisplayNameFor(model => model.ChosenName)</label>
+                <input asp-for="ChosenName" class="form-control" />
+                <span asp-validation-for="ChosenName" class="text-danger"></span>
+            </div>
+
+            <!-- Full Name -->
+            <div class="form-group">
+                <label asp-for="FullName">@Html.DisplayNameFor(model => model.FullName)</label>
+                <input asp-for="FullName" class="form-control" />
+                <span asp-validation-for="FullName" class="text-danger"></span>
+            </div>
+
+            <!-- Document -->
+            <div class="form-group">
+                <label asp-for="Document">@Html.DisplayNameFor(model => model.Document)</label>
+                <input asp-for="Document" class="form-control" />
+                <span asp-validation-for="Document" class="text-danger"></span>
+            </div>
+
+            <!-- Address -->
+            <div class="form-group">
+                <label asp-for="Address">@Html.DisplayNameFor(model => model.Address)</label>
+                <input asp-for="Address" class="form-control" />
+                <span asp-validation-for="Address" class="text-danger"></span>
+            </div>
+
+            <!-- Phone number -->
+            <div class="form-group">
+                <label asp-for="PhoneNumber">@Html.DisplayNameFor(model => model.PhoneNumber)</label>
+                <input asp-for="PhoneNumber" class="form-control" />
+                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+            </div>
+
+            <p class="text-success">@ViewBag.UserMessage</p>
+
+            <!-- Update __ Change password -->
+            <div class="form-group">
+                <input type="submit" asp-action="UpdateUser" value="Update" class="btn btn-primary" />
+                <a asp-action="ChangePassword" class="btn btn-success">Change password</a>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+@section Scripts{
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
