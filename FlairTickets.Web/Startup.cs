@@ -1,5 +1,6 @@
 using FlairTickets.Web.Data;
 using FlairTickets.Web.Data.Entities;
+using FlairTickets.Web.Data.Repository;
 using FlairTickets.Web.Helpers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -38,7 +39,13 @@ namespace FlairTickets.Web
                 cfg => cfg.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddTransient<SeedDb>();
+
             services.AddScoped<IUserHelper, UserHelper>();
+
+            services.AddScoped<IAirplaneRepository, AirplaneRepository>();
+            services.AddScoped<IAirportRepository, AirportRepository>();
+            services.AddScoped<IFlightRepository, FlightRepository>();
+            services.AddScoped<ITicketRepository, TicketRepository>();
 
             services.AddControllersWithViews();
         }
