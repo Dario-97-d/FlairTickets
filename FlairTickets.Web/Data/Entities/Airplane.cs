@@ -11,5 +11,7 @@ namespace FlairTickets.Web.Data.Entities
         public string Name { get; set; }
 
         public int Seats { get; set; }
+
+        public string ComboName => $"{Model} ({Seats}) - {Name}";
     }
 }

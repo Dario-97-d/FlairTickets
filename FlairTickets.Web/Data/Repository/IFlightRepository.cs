@@ -1,6 +1,10 @@
-﻿namespace FlairTickets.Web.Data.Repository
+﻿using System.Threading.Tasks;
+using FlairTickets.Web.Data.Entities;
+
+namespace FlairTickets.Web.Data.Repository
 {
-    internal interface IFlightRepository
+    public interface IFlightRepository : IGenericRepository<Flight>
     {
+        Task CreateAsync(Flight flight);
     }
 }

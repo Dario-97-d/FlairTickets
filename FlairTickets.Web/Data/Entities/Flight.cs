@@ -9,9 +9,11 @@ namespace FlairTickets.Web.Data.Entities
 
         public string Number { get; set; }
 
-        public DateTime Date { get; set; }
+        public DateTime DateTime { get; set; }
 
-        public TimeSpan Time { get; set; }
+        public string DateOnly => DateTime.Date.ToString();
+
+        public string TimeOnly => DateTime.TimeOfDay.ToString();
 
         public Airport Origin { get; set; }
 

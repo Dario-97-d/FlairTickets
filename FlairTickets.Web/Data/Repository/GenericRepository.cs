@@ -14,7 +14,7 @@ namespace FlairTickets.Web.Data.Repository
         }
 
 
-        public async Task CreateAsync(T entity)
+        public virtual async Task CreateAsync(T entity)
         {
             await _context.Set<T>().AddAsync(entity);
             await _context.SaveChangesAsync();
@@ -35,12 +35,12 @@ namespace FlairTickets.Web.Data.Repository
             return await _context.Set<T>().AnyAsync(e => e.Id == id);
         }
 
-        public IQueryable<T> GetAll()
+        public virtual IQueryable<T> GetAll()
         {
             return _context.Set<T>().AsNoTracking();
         }
 
-        public async Task<T> GetByIdAsync(int id)
+        public virtual async Task<T> GetByIdAsync(int id)
         {
             return await _context.Set<T>().AsNoTracking().FirstOrDefaultAsync(e => e.Id == id);
         }

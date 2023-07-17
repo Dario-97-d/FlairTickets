@@ -2,7 +2,7 @@
 
 namespace FlairTickets.Web.Data.Entities
 {
-    public class Airport :IEntity
+    public class Airport : IEntity
     {
         public int Id { get; set; }
 
@@ -13,5 +13,7 @@ namespace FlairTickets.Web.Data.Entities
         public string City { get; set; }
         
         public string Country { get; set; }
+
+        public string ComboName => $"{IataCode} - {City}";
     }
 }
