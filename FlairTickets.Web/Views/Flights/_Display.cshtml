@@ -1,0 +1,34 @@
+﻿@model FlairTickets.Web.Data.Entities.Flight
+
+<dl class="row">
+    <dt class="col-sm-6">
+        @Html.DisplayNameFor(model => model.Number)
+    </dt>
+    <dd class="col-sm-6">
+        @Html.DisplayFor(model => model.Number)
+    </dd>
+    <dt class="col-sm-6">
+        @Html.DisplayNameFor(model => model.DateTime)
+    </dt>
+    <dd class="col-sm-6">
+        @Html.DisplayFor(model => model.DateTime)
+    </dd>
+    <dt class="col-sm-6">
+        @Html.DisplayNameFor(model => model.Origin.ComboName)
+    </dt>
+    <dd class="col-sm-6">
+        @Html.DisplayFor(model => model.Origin.ComboName)
+    </dd>
+    <dt class="col-sm-6">
+        @Html.DisplayNameFor(model => model.Destination.ComboName)
+    </dt>
+    <dd class="col-sm-6">
+        @Html.DisplayFor(model => model.Destination.ComboName)
+    </dd>
+    <dt class="col-sm-6">
+        @Html.DisplayNameFor(model => model.Airplane.ComboName)
+    </dt>
+    <dd class="col-sm-6">
+        @Html.DisplayFor(model => model.Airplane.ComboName)
+    </dd>
+</dl>
