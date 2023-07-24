@@ -1,4 +1,4 @@
-﻿@model FlairTickets.Web.Data.Entities.Flight
+﻿@model FlairTickets.Web.Data.Entities.Ticket
 
 @{
     ViewData["Title"] = "Details";
@@ -7,8 +7,6 @@
 <h1>Details</h1>
 
 <div>
-    <h4>Flight | <a asp-controller="Tickets" asp-action="Create" asp-route-flightId="@Model.Id">Buy Ticket</a></h4>
-    <hr />
     <partial name="_Display" />
 </div>
 <div>

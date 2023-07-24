@@ -1,0 +1,65 @@
+﻿@model IEnumerable<FlairTickets.Web.Data.Entities.Ticket>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-controller="Flights">See flights</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Flight.Number)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Flight.DateOnly)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Flight.TimeOnly)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Flight.Origin.ComboName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Flight.Destination.ComboName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Seat)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Flight.Number)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Flight.DateOnly)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Flight.TimeOnly)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Flight.Origin.ComboName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Flight.Destination.ComboName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Seat)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

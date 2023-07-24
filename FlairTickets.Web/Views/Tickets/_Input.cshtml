@@ -1,0 +1,39 @@
+﻿@model FlairTickets.Web.Data.Entities.Ticket
+
+<h4>Ticket</h4>
+<hr />
+<div class="row">
+
+    <div class="col-md-4">
+        <h4>Flight</h4>
+        <hr />
+        <partial name="/Views/Flights/_Display.cshtml" for="@Model.Flight" />
+    </div>
+
+    <div class="col-md-4">
+        <form asp-action="@ViewData["Title"]">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" name="flightId" value="@Model.Flight.Id" />
+            <div class="form-group">
+                <label asp-for="Seat" class="control-label"></label>
+                <input asp-for="Seat" class="form-control" />
+                <span asp-validation-for="Seat" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="@(ViewData["Title"] as string == "Create" ? "Create" : "Save")" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+
+</div>
+
+<div>
+    <a asp-controller="Flights" asp-action="Index">Back to Flights</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
