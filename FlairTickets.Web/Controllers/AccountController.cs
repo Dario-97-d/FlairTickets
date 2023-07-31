@@ -135,9 +135,11 @@ namespace FlairTickets.Web.Controllers
                         Address = model.Address
                     };
 
-                    var register = await _userHelper.AddUserAsync(user, model.Password);
-                    if (register.Succeeded)
+                    var registerUser = await _userHelper.AddUserAsync(user, model.Password);
+                    if (registerUser.Succeeded)
                     {
+                        await _userHelper.AddUserToRoleAsync(user, "Customer");
+
                         var loginViewModel = new LoginViewModel
                         {
                             Email = model.Email,

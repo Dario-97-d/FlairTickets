@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using FlairTickets.Web.Data.Entities;
 using FlairTickets.Web.Helpers;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace FlairTickets.Web.Data
@@ -9,11 +10,13 @@ namespace FlairTickets.Web.Data
     {
         private readonly DataContext _context;
         private readonly IUserHelper _userHelper;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
-        public SeedDb(DataContext context, IUserHelper userHelper)
+        public SeedDb(DataContext context, IUserHelper userHelper, RoleManager<IdentityRole> roleManager)
         {
             _context = context;
             _userHelper = userHelper;
+            _roleManager = roleManager;
         }
 
 
@@ -21,6 +24,7 @@ namespace FlairTickets.Web.Data
         {
             await _context.Database.MigrateAsync();
 
+            await SeedRolesAsync();
             await SeedUserAsync();
 
             await SeedAirplanesAsync();
@@ -69,6 +73,19 @@ namespace FlairTickets.Web.Data
             }
         }
 
+        private async Task SeedRolesAsync()
+        {
+            string[] roles = { "Admin", "Worker", "Customer" };
+
+            foreach(string role in roles)
+            {
+                if (!await _roleManager.RoleExistsAsync(role))
+                {
+                    await _roleManager.CreateAsync(new IdentityRole(role));
+                }
+            }
+        }
+
         private async Task SeedUserAsync()
         {
             string defaultEmail = "dario@e.mail";
@@ -89,6 +106,15 @@ namespace FlairTickets.Web.Data
                 string password = "dario@e.mail97D";
 
                 await _userHelper.AddUserAsync(user, password);
+
+                await _userHelper.AddUserToRoleAsync(user, "Admin");
+            }
+            else
+            {
+                if (!await _userHelper.IsUserInRoleAsync(user, "Admin"))
+                {
+                    await _userHelper.AddUserToRoleAsync(user, "Admin");
+                }
             }
         }
     }

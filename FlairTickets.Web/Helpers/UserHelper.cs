@@ -22,6 +22,11 @@ namespace FlairTickets.Web.Helpers
             return await _userManager.CreateAsync(user, password);
         }
 
+        public async Task AddUserToRoleAsync(User user, string role)
+        {
+            await _userManager.AddToRoleAsync(user, role);
+        }
+
         public async Task<IdentityResult> ChangePasswordAsync(string email, ChangePasswordViewModel model)
         {
             var user = await _userManager.FindByEmailAsync(email);
@@ -39,6 +44,11 @@ namespace FlairTickets.Web.Helpers
         public async Task<User> GetUserByEmailAsync(string email)
         {
             return await _userManager.FindByEmailAsync(email);
+        }
+
+        public async Task<bool> IsUserInRoleAsync(User user, string role)
+        {
+            return await _userManager.IsInRoleAsync(user, role);
         }
 
         public async Task<SignInResult> LoginAsync(LoginViewModel model)
