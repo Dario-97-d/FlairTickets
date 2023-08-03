@@ -9,5 +9,7 @@ namespace FlairTickets.Web.Data.Entities
         public Flight Flight { get; set; }
 
         public int Seat { get; set; }
+
+        public User User { get; set; }
     }
 }

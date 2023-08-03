@@ -5,7 +5,7 @@ namespace FlairTickets.Web.Data.Repository
 {
     public interface ITicketRepository : IGenericRepository<Ticket>
     {
-        Task CreateAsync(Ticket ticket, Flight flight);
+        Task CreateAsync(Ticket ticket, Flight flight, User user);
         Task<Ticket> GetByIdWithFlightDetailsAsync(int id);
     }
 }

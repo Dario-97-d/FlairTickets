@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using FlairTickets.Web.Data.Entities;
 using FlairTickets.Web.Data.Repository;
+using FlairTickets.Web.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -10,11 +11,16 @@ namespace FlairTickets.Web.Controllers
     [Authorize]
     public class TicketsController : Controller
     {
+        private readonly IUserHelper _userHelper;
         private readonly IFlightRepository _flightRepository;
         private readonly ITicketRepository _ticketRepository;
 
-        public TicketsController(IFlightRepository flightRepository, ITicketRepository ticketRepository)
+        public TicketsController(
+            IUserHelper userHelper,
+            IFlightRepository flightRepository,
+            ITicketRepository ticketRepository)
         {
+            _userHelper = userHelper;
             _flightRepository = flightRepository;
             _ticketRepository = ticketRepository;
         }
@@ -62,7 +68,10 @@ namespace FlairTickets.Web.Controllers
                 var flight = await _flightRepository.GetByIdAsync(flightId);
                 if (flight == null) return NotFound();
 
-                await _ticketRepository.CreateAsync(ticket, flight);
+                var user = await _userHelper.GetUserByEmailAsync(User.Identity.Name);
+                if (user == null) return NotFound();
+
+                await _ticketRepository.CreateAsync(ticket, flight, user);
                 return RedirectToAction(nameof(Index));
             }
 

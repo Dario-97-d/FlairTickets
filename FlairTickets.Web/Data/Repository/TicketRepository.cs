@@ -15,11 +15,12 @@ namespace FlairTickets.Web.Data.Repository
         }
 
 
-        public async Task CreateAsync(Ticket ticket, Flight flight)
+        public async Task CreateAsync(Ticket ticket, Flight flight, User user)
         {
             await _context.AddAsync(ticket);
 
             ticket.Flight = flight;
+            ticket.User = user;
 
             await _context.SaveChangesAsync();
         }
