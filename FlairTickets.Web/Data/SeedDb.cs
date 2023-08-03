@@ -3,18 +3,25 @@ using FlairTickets.Web.Data.Entities;
 using FlairTickets.Web.Helpers;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace FlairTickets.Web.Data
 {
     public class SeedDb
     {
         private readonly DataContext _context;
+        private readonly IConfiguration _configuration;
         private readonly IUserHelper _userHelper;
         private readonly RoleManager<IdentityRole> _roleManager;
 
-        public SeedDb(DataContext context, IUserHelper userHelper, RoleManager<IdentityRole> roleManager)
+        public SeedDb(
+            DataContext context,
+            IConfiguration configuration,
+            IUserHelper userHelper,
+            RoleManager<IdentityRole> roleManager)
         {
             _context = context;
+            _configuration = configuration;
             _userHelper = userHelper;
             _roleManager = roleManager;
         }
@@ -75,9 +82,9 @@ namespace FlairTickets.Web.Data
 
         private async Task SeedRolesAsync()
         {
-            string[] roles = { "Admin", "Worker", "Customer" };
+            string[] roles = _configuration["SeedDb:Roles"].Split(',');
 
-            foreach(string role in roles)
+            foreach (string role in roles)
             {
                 if (!await _roleManager.RoleExistsAsync(role))
                 {
@@ -88,22 +95,22 @@ namespace FlairTickets.Web.Data
 
         private async Task SeedUserAsync()
         {
-            string defaultEmail = "dario@e.mail";
-            var user = await _userHelper.GetUserByEmailAsync(defaultEmail);
+            string email = _configuration["SeedDb:DefaultUser:Email"];
+            var user = await _userHelper.GetUserByEmailAsync(email);
 
             if (user == null)
             {
                 user = new User
                 {
-                    Email = defaultEmail,
-                    UserName = defaultEmail,
-                    ChosenName = "Dário",
-                    FullName = "Dário Dias",
-                    Document = "0123456789",
-                    Address = "Road Street House"
+                    Email = email,
+                    UserName = email,
+                    ChosenName = _configuration["SeedDb:DefaultUser:ChosenName"],
+                    FullName = _configuration["SeedDb:DefaultUser:FullName"],
+                    Document = _configuration["SeedDb:DefaultUser:Document"],
+                    Address = _configuration["SeedDb:DefaultUser:Address"]
                 };
 
-                string password = "dario@e.mail97D";
+                string password = email;
 
                 await _userHelper.AddUserAsync(user, password);
 
