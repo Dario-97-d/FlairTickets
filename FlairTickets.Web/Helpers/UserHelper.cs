@@ -31,11 +31,31 @@ namespace FlairTickets.Web.Helpers
             User user, string oldPassword, string newPassword)
         {
             return await _userManager.ChangePasswordAsync(user, oldPassword, newPassword);
-            }
+        }
+
+        public async Task<IdentityResult> ConfirmEmailAsync(User user, string token)
+        {
+            return await _userManager.ConfirmEmailAsync(user, token);
+        }
+
+        public async Task<string> GenerateEmailConfirmationTokenAsync(User user)
+        {
+            return await _userManager.GenerateEmailConfirmationTokenAsync(user);
+        }
+
+        public async Task<string> GeneratePasswordResetTokenAsync(User user)
+        {
+            return await _userManager.GeneratePasswordResetTokenAsync(user);
+        }
 
         public async Task<User> GetUserByEmailAsync(string email)
         {
             return await _userManager.FindByEmailAsync(email);
+        }
+
+        public async Task<User> GetUserByIdAsync(string id)
+        {
+            return await _userManager.FindByIdAsync(id);
         }
 
         public async Task<bool> IsUserInRoleAsync(User user, string role)
@@ -46,16 +66,26 @@ namespace FlairTickets.Web.Helpers
         public async Task<SignInResult> LoginAsync(User user, string password, bool rememberMe)
         {
             return await _signInManager.PasswordSignInAsync(user, password, rememberMe, false);
-            }
-            
+        }
+
         public async Task LogoutAsync()
         {
             await _signInManager.SignOutAsync();
         }
 
+        public async Task<IdentityResult> ResetPasswordAsync(User user, string token, string password)
+        {
+            return await _userManager.ResetPasswordAsync(user, token, password);
+        }
+
+        public async Task RollbackRegisteredUserAsync(User user)
+        {
+            await _userManager.DeleteAsync(user);
+        }
+
         public async Task<IdentityResult> UpdateUserAsync(User user)
         {
-                return await _userManager.UpdateAsync(user);
-            }
+            return await _userManager.UpdateAsync(user);
+        }
     }
 }

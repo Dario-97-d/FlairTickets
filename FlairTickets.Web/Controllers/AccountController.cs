@@ -9,10 +9,12 @@ namespace FlairTickets.Web.Controllers
 {
     public class AccountController : Controller
     {
+        private readonly IMailHelper _mailHelper;
         private readonly IUserHelper _userHelper;
 
-        public AccountController(IUserHelper userHelper)
+        public AccountController(IMailHelper mailHelper, IUserHelper userHelper)
         {
+            _mailHelper = mailHelper;
             _userHelper = userHelper;
         }
 
@@ -32,19 +34,89 @@ namespace FlairTickets.Web.Controllers
                 var user = await _userHelper.GetUserByEmailAsync(User.Identity.Name);
                 if (user != null)
                 {
-                var changePassword = await _userHelper.ChangePasswordAsync(
+                    var changePassword = await _userHelper.ChangePasswordAsync(
                         user, model.OldPassword, model.NewPassword);
 
-                if (changePassword.Succeeded)
-                {
-                    ViewBag.UserMessage = "Password updated!";
-                    return View();
+                    if (changePassword.Succeeded)
+                    {
+                        ViewBag.UserMessage = "Password updated!";
+                        return View();
+                    }
                 }
-            }
             }
 
             ModelState.AddModelError(string.Empty, "Could not update password.");
             return View();
+        }
+
+        public async Task<IActionResult> ConfirmEmail(string userid, string token)
+        {
+            if (string.IsNullOrEmpty(userid) || string.IsNullOrEmpty(token))
+            {
+                return NotFound();
+            }
+
+            var user = await _userHelper.GetUserByIdAsync(userid);
+            if (user == null) return NotFound();
+
+            var confirmEmail = await _userHelper.ConfirmEmailAsync(user, token);
+            if (confirmEmail.Succeeded)
+            {
+                await _userHelper.AddUserToRoleAsync(user, "Customer");
+
+                return View("EmailConfirmed");
+            }
+
+            ViewBag.Message = "Could not confirm email.";
+            return View();
+        }
+
+        public IActionResult ForgotPassword()
+        {
+            if (User.Identity.IsAuthenticated)
+                return RedirectToHomePage();
+
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel model)
+        {
+            if (User.Identity.IsAuthenticated)
+                return RedirectToHomePage();
+
+            if (ModelState.IsValid)
+            {
+                var user = await _userHelper.GetUserByEmailAsync(model.Email);
+                if (user != null)
+                {
+                    string token = await _userHelper.GeneratePasswordResetTokenAsync(user);
+
+                    string tokenUrl = Url.Action(
+                        action: nameof(ResetPassword),
+                        controller: "Account",
+                        values: new { token },
+                        protocol: HttpContext.Request.Scheme);
+
+                    if (!string.IsNullOrEmpty(tokenUrl))
+                    {
+                        var sendPasswordResetEmail = _mailHelper.SendPasswordResetEmail(user, tokenUrl);
+                        if (sendPasswordResetEmail)
+                        {
+                            // Success.
+
+                            TempData["Message"] =
+                                $"An email has been sent to <i>{model.Email}</i> " +
+                                $"with a link to reset password.";
+
+                            return RedirectToHomePage();
+                        }
+                    }
+                }
+            }
+
+            ModelState.AddModelError(string.Empty, "Could not send password reset email.");
+            return View(nameof(ForgotPassword), model);
         }
 
         [Authorize]
@@ -88,15 +160,15 @@ namespace FlairTickets.Web.Controllers
                 if (user != null)
                 {
                     var login = await _userHelper.LoginAsync(user, model.Password, model.RememberMe);
-                if (login.Succeeded)
-                {
-                    if (Request.Query.ContainsKey("ReturnUrl"))
+                    if (login.Succeeded)
                     {
-                        return Redirect(Request.Query["ReturnUrl"]);
+                        if (Request.Query.ContainsKey("ReturnUrl"))
+                        {
+                            return Redirect(Request.Query["ReturnUrl"]);
+                        }
+                        else return RedirectToHomePage();
                     }
-                    else return RedirectToHomePage();
                 }
-            }
             }
 
             ModelState.AddModelError(string.Empty, "Could not login.");
@@ -145,22 +217,74 @@ namespace FlairTickets.Web.Controllers
                     var registerUser = await _userHelper.AddUserAsync(user, model.Password);
                     if (registerUser.Succeeded)
                     {
-                        await _userHelper.AddUserToRoleAsync(user, "Customer");
+                        string token = await _userHelper.GenerateEmailConfirmationTokenAsync(user);
 
-                        var loginViewModel = new LoginViewModel
+                        string? tokenUrl = Url.Action(
+                            action: nameof(ConfirmEmail),
+                            controller: "Account",
+                            values: new
+                            {
+                                userid = user.Id,
+                                token
+                            },
+                            protocol: HttpContext.Request.Scheme);
+
+                        if (!string.IsNullOrEmpty(tokenUrl))
                         {
-                            Email = model.Email,
-                            Password = model.Password,
-                            RememberMe = false
-                        };
+                            var sendConfirmationEmail = _mailHelper.SendConfirmationEmail(user, tokenUrl);
+                            if (sendConfirmationEmail)
+                            {
+                                // Success.
 
-                        return await Login(loginViewModel);
+                                ViewBag.Message = "Hi there!" +
+                                    " In order to access the account, email confirmation is required." +
+                                    " A link has been sent to the registered email address.";
+
+                                return View(nameof(ConfirmEmail));
+                            }
+                        }
+
+                        // If it gets here, rollback user creation.
+                        await _userHelper.RollbackRegisteredUserAsync(user);
                     }
                 }
             }
 
             ModelState.AddModelError(string.Empty, "Could not sign up.");
             return View();
+        }
+
+        public IActionResult ResetPassword(string token)
+        {
+            if (User.Identity.IsAuthenticated)
+                return RedirectToHomePage();
+
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
+        {
+            if (User.Identity.IsAuthenticated) return RedirectToHomePage();
+
+            if (ModelState.IsValid)
+            {
+                var user = await _userHelper.GetUserByEmailAsync(model.Email);
+                if (user != null)
+                {
+                    var resetPassword = await _userHelper.ResetPasswordAsync(
+                        user, model.Token, model.Password);
+
+                    if (resetPassword.Succeeded)
+                    {
+                        TempData["Message"] = "A new password has been set.";
+                        return RedirectToAction(nameof(Login));
+                    }
+                }
+            }
+
+            ModelState.AddModelError(string.Empty, "Could not reset password.");
+            return View(model);
         }
 
         [Authorize]
@@ -180,12 +304,12 @@ namespace FlairTickets.Web.Controllers
                     user.PhoneNumber = model.PhoneNumber;
 
                     var updateUser = await _userHelper.UpdateUserAsync(user);
-                if (updateUser.Succeeded)
-                {
-                    ViewBag.UserMessage = "The account details were updated.";
-                    return View(nameof(Index));
+                    if (updateUser.Succeeded)
+                    {
+                        ViewBag.UserMessage = "The account details were updated.";
+                        return View(nameof(Index));
+                    }
                 }
-            }
             }
 
             ModelState.AddModelError(string.Empty, "Could not update account details.");

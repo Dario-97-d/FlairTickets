@@ -8,8 +8,10 @@
 <div class="row">
     <div class="col-md-4 offset-md-4">
         <form method="POST">
+            
+            <p class="text-success">@TempData["Message"]</p>
+            
             <div asp-validation-summary="ModelOnly"></div>
-
 
             <!-- Email -->
             <div class="form-group">
@@ -25,13 +27,17 @@
                 <span asp-validation-for="Password" class="text-danger"></span>
             </div>
 
-            <!-- Remember Me? -->
             <div class="form-group">
+                
+                <!-- Remember me? -->
                 <div class="form-check">
                     <input asp-for="RememberMe" type="checkbox" class="form-check-input" />
                     <label asp-for="RememberMe" class="form-check-label"></label>
                 </div>
                 <span asp-validation-for="RememberMe" class="text-danger"></span>
+
+                <!-- Forgot password? -->
+                <a asp-action="ForgotPassword" class="">Forgot password?</a>
             </div>
 
 

@@ -35,7 +35,9 @@ namespace FlairTickets.Web
                 cfg.Password.RequireUppercase = true;
                 cfg.Password.RequiredLength = 8;
                 cfg.Password.RequiredUniqueChars = 8;
-            }).AddEntityFrameworkStores<DataContext>();
+            })
+                .AddEntityFrameworkStores<DataContext>()
+                .AddDefaultTokenProviders();
 
             services.AddDbContext<DataContext>(
                 cfg => cfg.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
@@ -43,6 +45,7 @@ namespace FlairTickets.Web
             services.AddTransient<SeedDb>();
 
             services.AddScoped<IConverterHelper, ConverterHelper>();
+            services.AddScoped<IMailHelper, MailHelper>();
             services.AddScoped<IUserHelper, UserHelper>();
 
             services.AddScoped<IAirplaneRepository, AirplaneRepository>();
