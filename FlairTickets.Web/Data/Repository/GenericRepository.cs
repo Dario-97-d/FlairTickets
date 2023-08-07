@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
+using FlairTickets.Web.Data.Repository.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace FlairTickets.Web.Data.Repository

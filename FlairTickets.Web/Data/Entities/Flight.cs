@@ -1,5 +1,5 @@
 ﻿using System;
-using FlairTickets.Web.Data.Repository;
+using FlairTickets.Web.Data.Repository.Interfaces;
 
 namespace FlairTickets.Web.Data.Entities
 {

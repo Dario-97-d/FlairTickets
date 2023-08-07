@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 using FlairTickets.Web.Data.Entities;
-using FlairTickets.Web.Helpers;
+using FlairTickets.Web.Helpers.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;

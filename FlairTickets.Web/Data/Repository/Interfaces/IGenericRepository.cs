@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 
-namespace FlairTickets.Web.Data.Repository
+namespace FlairTickets.Web.Data.Repository.Interfaces
 {
     public interface IGenericRepository<T> where T : class, IEntity
     {

@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using FlairTickets.Web.Data.Entities;
-using FlairTickets.Web.Data.Repository;
-using FlairTickets.Web.Helpers;
+using FlairTickets.Web.Data.Repository.Interfaces;
+using FlairTickets.Web.Helpers.Interfaces;
 using FlairTickets.Web.Models.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

@@ -1,7 +1,9 @@
 using FlairTickets.Web.Data;
 using FlairTickets.Web.Data.Entities;
 using FlairTickets.Web.Data.Repository;
+using FlairTickets.Web.Data.Repository.Interfaces;
 using FlairTickets.Web.Helpers;
+using FlairTickets.Web.Helpers.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;

@@ -2,7 +2,7 @@
 using FlairTickets.Web.Data.Entities;
 using FlairTickets.Web.Models.Entities;
 
-namespace FlairTickets.Web.Helpers
+namespace FlairTickets.Web.Helpers.Interfaces
 {
     public interface IConverterHelper
     {

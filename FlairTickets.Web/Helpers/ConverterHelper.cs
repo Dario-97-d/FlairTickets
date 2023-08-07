@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using FlairTickets.Web.Data.Entities;
-using FlairTickets.Web.Data.Repository;
+using FlairTickets.Web.Data.Repository.Interfaces;
+using FlairTickets.Web.Helpers.Interfaces;
 using FlairTickets.Web.Models.Entities;
 
 namespace FlairTickets.Web.Helpers

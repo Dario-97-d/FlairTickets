@@ -3,7 +3,7 @@ using FlairTickets.Web.Data.Entities;
 using FlairTickets.Web.Models.Account;
 using Microsoft.AspNetCore.Identity;
 
-namespace FlairTickets.Web.Helpers
+namespace FlairTickets.Web.Helpers.Interfaces
 {
     public interface IUserHelper
     {

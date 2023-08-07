@@ -1,4 +1,4 @@
-﻿namespace FlairTickets.Web.Data.Repository
+﻿namespace FlairTickets.Web.Data.Repository.Interfaces
 {
     public interface IEntity
     {

@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using FlairTickets.Web.Data.Entities;
+using FlairTickets.Web.Data.Repository.Interfaces;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
