@@ -29,15 +29,18 @@ namespace FlairTickets.Web.Controllers
         {
             if (ModelState.IsValid)
             {
+                var user = await _userHelper.GetUserByEmailAsync(User.Identity.Name);
+                if (user != null)
+                {
                 var changePassword = await _userHelper.ChangePasswordAsync(
-                    User.Identity.Name,
-                    model);
+                        user, model.OldPassword, model.NewPassword);
 
                 if (changePassword.Succeeded)
                 {
                     ViewBag.UserMessage = "Password updated!";
                     return View();
                 }
+            }
             }
 
             ModelState.AddModelError(string.Empty, "Could not update password.");
@@ -81,7 +84,10 @@ namespace FlairTickets.Web.Controllers
 
             if (ModelState.IsValid)
             {
-                var login = await _userHelper.LoginAsync(model);
+                var user = await _userHelper.GetUserByEmailAsync(model.Email);
+                if (user != null)
+                {
+                    var login = await _userHelper.LoginAsync(user, model.Password, model.RememberMe);
                 if (login.Succeeded)
                 {
                     if (Request.Query.ContainsKey("ReturnUrl"))
@@ -90,6 +96,7 @@ namespace FlairTickets.Web.Controllers
                     }
                     else return RedirectToHomePage();
                 }
+            }
             }
 
             ModelState.AddModelError(string.Empty, "Could not login.");
@@ -162,12 +169,23 @@ namespace FlairTickets.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                var updateUser = await _userHelper.UpdateUserAsync(User.Identity.Name, model);
+                var user = await _userHelper.GetUserByEmailAsync(User.Identity.Name);
+                if (user != null)
+                {
+                    // Update user.
+                    user.ChosenName = model.ChosenName;
+                    user.FullName = model.FullName;
+                    user.Document = model.Document;
+                    user.Address = model.Address;
+                    user.PhoneNumber = model.PhoneNumber;
+
+                    var updateUser = await _userHelper.UpdateUserAsync(user);
                 if (updateUser.Succeeded)
                 {
                     ViewBag.UserMessage = "The account details were updated.";
                     return View(nameof(Index));
                 }
+            }
             }
 
             ModelState.AddModelError(string.Empty, "Could not update account details.");

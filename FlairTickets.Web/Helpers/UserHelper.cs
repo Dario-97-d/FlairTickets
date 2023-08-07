@@ -1,7 +1,6 @@
 ﻿using System.Threading.Tasks;
 using FlairTickets.Web.Data.Entities;
 using FlairTickets.Web.Helpers.Interfaces;
-using FlairTickets.Web.Models.Account;
 using Microsoft.AspNetCore.Identity;
 
 namespace FlairTickets.Web.Helpers
@@ -28,19 +27,11 @@ namespace FlairTickets.Web.Helpers
             await _userManager.AddToRoleAsync(user, role);
         }
 
-        public async Task<IdentityResult> ChangePasswordAsync(string email, ChangePasswordViewModel model)
+        public async Task<IdentityResult> ChangePasswordAsync(
+            User user, string oldPassword, string newPassword)
         {
-            var user = await _userManager.FindByEmailAsync(email);
-            if (user != null)
-            {
-                return await _userManager.ChangePasswordAsync(
-                    user,
-                    model.OldPassword,
-                    model.NewPassword);
+            return await _userManager.ChangePasswordAsync(user, oldPassword, newPassword);
             }
-
-            return IdentityResult.Failed();
-        }
 
         public async Task<User> GetUserByEmailAsync(string email)
         {
@@ -52,41 +43,19 @@ namespace FlairTickets.Web.Helpers
             return await _userManager.IsInRoleAsync(user, role);
         }
 
-        public async Task<SignInResult> LoginAsync(LoginViewModel model)
+        public async Task<SignInResult> LoginAsync(User user, string password, bool rememberMe)
         {
-            var user = await _userManager.FindByEmailAsync(model.Email);
-            if (user != null)
-            {
-                return await _signInManager.PasswordSignInAsync(
-                    user,
-                    model.Password,
-                    model.RememberMe,
-                    false);
+            return await _signInManager.PasswordSignInAsync(user, password, rememberMe, false);
             }
             
-            return SignInResult.Failed;
-        }
-
         public async Task LogoutAsync()
         {
             await _signInManager.SignOutAsync();
         }
 
-        public async Task<IdentityResult> UpdateUserAsync(string userName, UpdateUserViewModel model)
+        public async Task<IdentityResult> UpdateUserAsync(User user)
         {
-            var user = await _userManager.FindByEmailAsync(userName);
-            if (user != null)
-            {
-                user.ChosenName = model.ChosenName;
-                user.FullName = model.FullName;
-                user.Document = model.Document;
-                user.Address = model.Address;
-                user.PhoneNumber = model.PhoneNumber;
-
                 return await _userManager.UpdateAsync(user);
             }
-
-            return IdentityResult.Failed();
-        }
     }
 }
