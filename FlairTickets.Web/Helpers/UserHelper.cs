@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using FlairTickets.Web.Data.Entities;
 using FlairTickets.Web.Helpers.Interfaces;
 using Microsoft.AspNetCore.Identity;
@@ -48,6 +49,11 @@ namespace FlairTickets.Web.Helpers
             return await _userManager.GeneratePasswordResetTokenAsync(user);
         }
 
+        public async Task<IEnumerable<User>> GetAllInRoleAsync(string role)
+        {
+            return await _userManager.GetUsersInRoleAsync(role);
+        }
+
         public async Task<User> GetUserByEmailAsync(string email)
         {
             return await _userManager.FindByEmailAsync(email);
@@ -71,6 +77,11 @@ namespace FlairTickets.Web.Helpers
         public async Task LogoutAsync()
         {
             await _signInManager.SignOutAsync();
+        }
+
+        public async Task<IdentityResult> RemoveFromRoleAsync(User user, string role)
+        {
+            return await _userManager.RemoveFromRoleAsync(user, role);
         }
 
         public async Task<IdentityResult> ResetPasswordAsync(User user, string token, string password)
