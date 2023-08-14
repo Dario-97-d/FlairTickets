@@ -73,8 +73,7 @@ namespace FlairTickets.Web.Controllers
 
         public IActionResult ForgotPassword()
         {
-            if (User.Identity.IsAuthenticated)
-                return RedirectToHomePage();
+            if (User.Identity.IsAuthenticated) return RedirectToHomePage();
 
             return View();
         }
@@ -82,8 +81,7 @@ namespace FlairTickets.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel model)
         {
-            if (User.Identity.IsAuthenticated)
-                return RedirectToHomePage();
+            if (User.Identity.IsAuthenticated) return RedirectToHomePage();
 
             if (ModelState.IsValid)
             {
@@ -142,8 +140,7 @@ namespace FlairTickets.Web.Controllers
 
         public IActionResult Login()
         {
-            if (User.Identity.IsAuthenticated)
-                return RedirectToHomePage();
+            if (User.Identity.IsAuthenticated) return RedirectToHomePage();
 
             return View();
         }
@@ -151,8 +148,7 @@ namespace FlairTickets.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(LoginViewModel model)
         {
-            if (User.Identity.IsAuthenticated)
-                return RedirectToHomePage();
+            if (User.Identity.IsAuthenticated) return RedirectToHomePage();
 
             if (ModelState.IsValid)
             {
@@ -185,8 +181,7 @@ namespace FlairTickets.Web.Controllers
 
         public IActionResult Register()
         {
-            if (User.Identity.IsAuthenticated)
-                return RedirectToHomePage();
+            if (User.Identity.IsAuthenticated) return RedirectToHomePage();
 
             return View();
         }
@@ -194,8 +189,7 @@ namespace FlairTickets.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(RegisterViewModel model)
         {
-            if (User.Identity.IsAuthenticated)
-                return RedirectToHomePage();
+            if (User.Identity.IsAuthenticated) return RedirectToHomePage();
 
             if (ModelState.IsValid)
             {
@@ -219,7 +213,7 @@ namespace FlairTickets.Web.Controllers
                     {
                         string token = await _userHelper.GenerateEmailConfirmationTokenAsync(user);
 
-                        string? tokenUrl = Url.Action(
+                        string tokenUrl = Url.Action(
                             action: nameof(ConfirmEmail),
                             controller: "Account",
                             values: new
@@ -256,8 +250,7 @@ namespace FlairTickets.Web.Controllers
 
         public IActionResult ResetPassword(string token)
         {
-            if (User.Identity.IsAuthenticated)
-                return RedirectToHomePage();
+            if (User.Identity.IsAuthenticated) return RedirectToHomePage();
 
             return View();
         }
@@ -277,6 +270,10 @@ namespace FlairTickets.Web.Controllers
 
                     if (resetPassword.Succeeded)
                     {
+                        // Confirm email.
+                        user.EmailConfirmed = true;
+                        await _userHelper.UpdateUserAsync(user);
+
                         TempData["Message"] = "A new password has been set.";
                         return RedirectToAction(nameof(Login));
                     }

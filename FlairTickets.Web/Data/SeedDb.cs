@@ -107,10 +107,11 @@ namespace FlairTickets.Web.Data
                     ChosenName = _configuration["SeedDb:DefaultUser:ChosenName"],
                     FullName = _configuration["SeedDb:DefaultUser:FullName"],
                     Document = _configuration["SeedDb:DefaultUser:Document"],
-                    Address = _configuration["SeedDb:DefaultUser:Address"]
+                    Address = _configuration["SeedDb:DefaultUser:Address"],
+                    EmailConfirmed = true,
                 };
 
-                string password = email;
+                string password = _configuration["SeedDb:DefaultUser:Password"];
 
                 await _userHelper.AddUserAsync(user, password);
 

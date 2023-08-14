@@ -35,6 +35,7 @@ namespace FlairTickets.Web
                 cfg.Password.RequireUppercase = true;
                 cfg.Password.RequiredLength = 8;
                 cfg.Password.RequiredUniqueChars = 8;
+                cfg.SignIn.RequireConfirmedEmail = true;
             })
                 .AddEntityFrameworkStores<DataContext>()
                 .AddDefaultTokenProviders();
