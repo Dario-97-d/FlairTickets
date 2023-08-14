@@ -1,0 +1,45 @@
+﻿@model FlairTickets.Web.Models.Account.EditEmployeeViewModel
+@{
+    ViewData["Title"] = "Edit employee";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<div class="row">
+    <div class="col-md-6 offset-md-3">
+        <form method="POST">
+
+            <p class="text-success">@ViewBag.Message</p>
+
+            <div asp-validation-summary="ModelOnly"></div>
+
+            <input type="hidden" asp-for="Id" />
+
+            <!-- ChosenName -->
+            <div class="form-group">
+                <label asp-for="ChosenName"></label>
+                <input asp-for="ChosenName" class="form-control" readonly />
+            </div>
+
+            <!-- Email -->
+            <div class="form-group">
+                <label asp-for="Email"></label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+
+            <!-- Update __ Back to Employees -->
+            <div class="form-group">
+                <input type="submit" value="Edit" class="btn btn-primary" />
+                <a asp-action="Index" class="btn btn-success">Back to employees</a>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+@section Scripts{
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

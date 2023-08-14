@@ -1,0 +1,16 @@
+﻿@model FlairTickets.Web.Data.Entities.User
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<div>
+    <h4>Employee</h4>
+    <hr />
+    <partial name="_Display" />
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>

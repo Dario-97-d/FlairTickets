@@ -1,0 +1,19 @@
+﻿@model FlairTickets.Web.Data.Entities.User
+@{
+    ViewData["Title"] = "Delete";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<div>
+    <h4>User</h4>
+    <hr />
+    
+    <partial name="_Display" />
+
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="Id" />
+        <input type="submit" value="Delete" class="btn btn-danger" /> |
+        <a asp-action="Index">Back to List</a>
+    </form>
+</div>

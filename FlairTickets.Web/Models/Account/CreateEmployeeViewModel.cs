@@ -1,10 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Microsoft.AspNetCore.Identity;
 
-namespace FlairTickets.Web.Data.Entities
+namespace FlairTickets.Web.Models.Account
 {
-    public class User : IdentityUser
+    public class CreateEmployeeViewModel
     {
+        [EmailAddress]
+        [Required]
+        public string Email { get; set; }
+
         [Display(Name = "Chosen name")]
         [MaxLength(15)]
         [Required]
@@ -14,7 +17,7 @@ namespace FlairTickets.Web.Data.Entities
         [MaxLength(60)]
         [Required]
         public string FullName { get; set; }
-        
+
         [MaxLength(15)]
         [Required]
         public string Document { get; set; }
@@ -23,10 +26,8 @@ namespace FlairTickets.Web.Data.Entities
         [Required]
         public string Address { get; set; }
 
-        [Display(Name = "Active?")]
-        public override bool EmailConfirmed { get => base.EmailConfirmed; set => base.EmailConfirmed = value; }
-
         [Display(Name = "Phone number")]
-        public override string PhoneNumber { get => base.PhoneNumber; set => base.PhoneNumber = value; }
+        [Required]
+        public string PhoneNumber { get; set; }
     }
 }

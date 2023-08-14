@@ -9,7 +9,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FlairTickets.Web.Controllers
 {
-    [Authorize]
     public class FlightsController : Controller
     {
         private readonly IConverterHelper _converterHelper;
@@ -52,6 +51,7 @@ namespace FlairTickets.Web.Controllers
 
 
         // GET: Flights/Create
+        [Authorize(Roles = "Employee")]
         public IActionResult Create()
         {
             var model = new FlightViewModel
@@ -63,6 +63,7 @@ namespace FlairTickets.Web.Controllers
         }
 
         // POST: Flights/Create
+        [Authorize(Roles = "Employee")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(FlightViewModel model)
@@ -80,6 +81,7 @@ namespace FlairTickets.Web.Controllers
 
 
         // GET: Flights/Edit/5
+        [Authorize(Roles = "Employee")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return NotFound();
@@ -96,6 +98,7 @@ namespace FlairTickets.Web.Controllers
         }
 
         // POST: Flights/Edit/5
+        [Authorize(Roles = "Employee")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(FlightViewModel model)
@@ -128,6 +131,7 @@ namespace FlairTickets.Web.Controllers
 
 
         // GET: Flights/Delete/5
+        [Authorize(Roles = "Employee")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null) return NotFound();
@@ -139,6 +143,7 @@ namespace FlairTickets.Web.Controllers
         }
 
         // POST: Flights/Delete/5
+        [Authorize(Roles = "Employee")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
