@@ -46,7 +46,10 @@ namespace FlairTickets.Web.Controllers
             var flight = await _flightRepository.GetByIdAsync(id.Value);
             if (flight == null) return NotFound();
 
-            return View(flight);
+            if (User.Identity.IsAuthenticated)
+                return View(flight);
+            else
+                return View("NotAuthDetails", flight);
         }
 
 
