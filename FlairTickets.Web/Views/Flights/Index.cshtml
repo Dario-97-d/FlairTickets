@@ -1,10 +1,10 @@
 ﻿@model IEnumerable<FlairTickets.Web.Data.Entities.Flight>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Flights";
 }
 
-<h1>Index</h1>
+<h1>@ViewData["Title"]</h1>
 
 @if (User.Identity.IsAuthenticated && User.IsInRole("Employee"))
 {
@@ -13,61 +13,4 @@
     </p>
 }
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Number)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DateOnly)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.TimeOnly)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Origin.ComboName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Destination.ComboName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Airplane.ComboName)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                <a asp-action="Details" asp-route-id="@item.Id">
-                    @Html.DisplayFor(modelItem => item.Number)
-                </a>
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DateOnly)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TimeOnly)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Origin.ComboName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Destination.ComboName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Airplane.ComboName)
-            </td>
-            <td>
-                    @if (User.Identity.IsAuthenticated && User.IsInRole("Employee"))
-                    {
-                        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a>
-                        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-                    }
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+<partial name="@($"_Table{ViewBag.Role}")" />

@@ -34,6 +34,14 @@ namespace FlairTickets.Web.Controllers
         // GET: Flights
         public IActionResult Index()
         {
+            // Assign role for partial view of index table
+            if (!User.Identity.IsAuthenticated)
+                ViewBag.Role = "Offline";
+            else if (User.IsInRole("Employee"))
+                ViewBag.Role = "Employee";
+            else
+                ViewBag.Role = "Customer";
+
             return View(_flightRepository.GetAll());
         }
 
@@ -59,8 +67,8 @@ namespace FlairTickets.Web.Controllers
         {
             var model = new FlightViewModel
             {
-                Airports = _airportRepository.GetComboAirports(),
-                Airplanes = _airplaneRepository.GetComboAirplanes()
+                ComboAirports = _airportRepository.GetComboAirports(),
+                ComboAirplanes = _airplaneRepository.GetComboAirplanes()
             };
             return View(model);
         }
@@ -94,8 +102,8 @@ namespace FlairTickets.Web.Controllers
 
             var model = _converterHelper.FlightToViewModel(flight);
 
-            model.Airplanes = _airplaneRepository.GetComboAirplanes();
-            model.Airports = _airportRepository.GetComboAirports();
+            model.ComboAirplanes = _airplaneRepository.GetComboAirplanes();
+            model.ComboAirports = _airportRepository.GetComboAirports();
 
             return View(model);
         }
