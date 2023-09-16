@@ -32,7 +32,7 @@ namespace FlairTickets.Web.Data
             await _context.Database.MigrateAsync();
 
             await SeedRolesAsync();
-            await SeedUserAsync();
+            await SeedUsersAsync();
 
             await SeedAirplanesAsync();
             await SeedAirportsAsync();
@@ -93,35 +93,38 @@ namespace FlairTickets.Web.Data
             }
         }
 
-        private async Task SeedUserAsync()
+        private async Task SeedUsersAsync()
         {
-            string email = _configuration["SeedDb:DefaultUser:Email"];
-            var user = await _userHelper.GetUserByEmailAsync(email);
+            var usersNames = _configuration["SeedDb:Users:AllUsers"].Split(',');
 
-            if (user == null)
+            foreach (var userName in usersNames)
             {
-                user = new User
+                string email = _configuration[$"SeedDb:Users:{userName}:Email"];
+
+                var user = await _userHelper.GetUserByEmailAsync(email);
+
+                if (user == null)
                 {
-                    Email = email,
-                    UserName = email,
-                    ChosenName = _configuration["SeedDb:DefaultUser:ChosenName"],
-                    FullName = _configuration["SeedDb:DefaultUser:FullName"],
-                    Document = _configuration["SeedDb:DefaultUser:Document"],
-                    Address = _configuration["SeedDb:DefaultUser:Address"],
-                    EmailConfirmed = true,
-                };
+                    user = new User
+                    {
+                        Email = email,
+                        UserName = email,
+                        ChosenName = _configuration[$"SeedDb:Users:{userName}:ChosenName"],
+                        FullName = _configuration[$"SeedDb:Users:{userName}:FullName"],
+                        Document = _configuration[$"SeedDb:Users:{userName}:Document"],
+                        Address = _configuration[$"SeedDb:Users:{userName}:Address"],
+                        EmailConfirmed = true,
+                    };
 
-                string password = _configuration["SeedDb:DefaultUser:Password"];
+                    string password = _configuration[$"SeedDb:Users:{userName}:Password"];
+                    await _userHelper.AddUserAsync(user, password);
+                }
 
-                await _userHelper.AddUserAsync(user, password);
+                string role = _configuration[$"SeedDb:Users:{userName}:Role"];
 
-                await _userHelper.AddUserToRoleAsync(user, "Admin");
-            }
-            else
-            {
-                if (!await _userHelper.IsUserInRoleAsync(user, "Admin"))
+                if (!await _userHelper.IsUserInRoleAsync(user, role))
                 {
-                    await _userHelper.AddUserToRoleAsync(user, "Admin");
+                    await _userHelper.AddUserToRoleAsync(user, role);
                 }
             }
         }

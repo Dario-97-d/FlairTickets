@@ -1,4 +1,5 @@
-﻿using FlairTickets.Web.Data.Entities;
+﻿using System.Linq;
+using FlairTickets.Web.Data.Entities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,7 +14,23 @@ namespace FlairTickets.Web.Data
 
         public DataContext(DbContextOptions options) : base(options)
         {
+        }
+
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            // Make all Foreign Keys Restrict on Delete.
+            var cascadeFks = builder.Model
+                .GetEntityTypes()
+                .SelectMany(t => t.GetForeignKeys())
+                .Where(fk => !fk.IsOwnership && fk.DeleteBehavior == DeleteBehavior.Cascade);
+
+            foreach (var fk in cascadeFks)
+            {
+                fk.DeleteBehavior = DeleteBehavior.Restrict;
+            }
             
+            base.OnModelCreating(builder);
         }
     }
 }

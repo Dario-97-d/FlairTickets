@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 using FlairTickets.Web.Data.Repository.Interfaces;
 
 namespace FlairTickets.Web.Data.Entities
@@ -15,9 +16,20 @@ namespace FlairTickets.Web.Data.Entities
 
         public string TimeOnly => DateTime.TimeOfDay.ToString();
 
+
+        [ForeignKey(nameof(Origin))]
+        public int OriginAirportId { get; set; }
+
         public Airport Origin { get; set; }
 
+
+        [ForeignKey(nameof(Destination))]
+        public int DestinationAirportId { get; set; }
+
         public Airport Destination { get; set; }
+
+
+        public int AirplaneId { get; set; }
 
         public Airplane Airplane { get; set; }
     }

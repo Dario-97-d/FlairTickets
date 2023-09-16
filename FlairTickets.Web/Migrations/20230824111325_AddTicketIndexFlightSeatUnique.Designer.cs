@@ -4,14 +4,16 @@ using FlairTickets.Web.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace FlairTickets.Web.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20230824111325_AddTicketIndexFlightSeatUnique")]
+    partial class AddTicketIndexFlightSeatUnique
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -71,28 +73,28 @@ namespace FlairTickets.Web.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("AirplaneId")
+                    b.Property<int?>("AirplaneId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("DateTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("DestinationAirportId")
+                    b.Property<int?>("DestinationId")
                         .HasColumnType("int");
 
                     b.Property<string>("Number")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("OriginAirportId")
+                    b.Property<int?>("OriginId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("AirplaneId");
 
-                    b.HasIndex("DestinationAirportId");
+                    b.HasIndex("DestinationId");
 
-                    b.HasIndex("OriginAirportId");
+                    b.HasIndex("OriginId");
 
                     b.ToTable("Flights");
                 });
@@ -104,7 +106,7 @@ namespace FlairTickets.Web.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("FlightId")
+                    b.Property<int?>("FlightId")
                         .HasColumnType("int");
 
                     b.Property<int>("Seat")
@@ -118,7 +120,8 @@ namespace FlairTickets.Web.Migrations
                     b.HasIndex("UserId");
 
                     b.HasIndex("FlightId", "Seat")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[FlightId] IS NOT NULL");
 
                     b.ToTable("Tickets");
                 });
@@ -343,21 +346,15 @@ namespace FlairTickets.Web.Migrations
                 {
                     b.HasOne("FlairTickets.Web.Data.Entities.Airplane", "Airplane")
                         .WithMany()
-                        .HasForeignKey("AirplaneId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .HasForeignKey("AirplaneId");
 
                     b.HasOne("FlairTickets.Web.Data.Entities.Airport", "Destination")
                         .WithMany()
-                        .HasForeignKey("DestinationAirportId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .HasForeignKey("DestinationId");
 
                     b.HasOne("FlairTickets.Web.Data.Entities.Airport", "Origin")
                         .WithMany()
-                        .HasForeignKey("OriginAirportId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .HasForeignKey("OriginId");
 
                     b.Navigation("Airplane");
 
@@ -370,9 +367,7 @@ namespace FlairTickets.Web.Migrations
                 {
                     b.HasOne("FlairTickets.Web.Data.Entities.Flight", "Flight")
                         .WithMany()
-                        .HasForeignKey("FlightId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .HasForeignKey("FlightId");
 
                     b.HasOne("FlairTickets.Web.Data.Entities.User", "User")
                         .WithMany()
