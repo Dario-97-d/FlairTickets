@@ -1,19 +1,26 @@
-﻿using FlairTickets.Web.Data.Repository.Interfaces;
+﻿using System.ComponentModel.DataAnnotations;
+using FlairTickets.Web.Data.Repository.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace FlairTickets.Web.Data.Entities
 {
+    [Index(nameof(IataCode), IsUnique = true)]
     public class Airport : IEntity
     {
         public int Id { get; set; }
 
+        [Required]
         public string IataCode { get; set; }
 
+        [Required]
         public string Name { get; set; }
 
+        [Required]
         public string City { get; set; }
-        
+
+        [Required]
         public string Country { get; set; }
 
-        public string ComboName => $"{IataCode} - {City}";
+        public string ComboName => $"{City} ({IataCode})";
     }
 }
