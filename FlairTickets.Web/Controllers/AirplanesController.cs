@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FlairTickets.Web.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     public class AirplanesController : Controller
     {
         private readonly IAirplaneRepository _airplaneRepository;
@@ -46,11 +46,26 @@ namespace FlairTickets.Web.Controllers
         // POST: Airplanes/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Model,Name,Seats")] Airplane airplane)
+        public async Task<IActionResult> Create(Airplane airplane)
         {
             if (ModelState.IsValid)
             {
-                await _airplaneRepository.CreateAsync(airplane);
+                try
+                {
+                    await _airplaneRepository.CreateAsync(airplane);
+                }
+                catch (DbUpdateException ex)
+                {
+                    if (ex.InnerException.Message.Contains("Cannot insert duplicate key"))
+                    {
+                        ModelState.AddModelError(
+                            string.Empty,
+                            $"There is already an {nameof(Airplane)}" +
+                            $" with this {nameof(Airplane.Name)}.");
+
+                        return View(airplane);
+                    }
+                }
                 return RedirectToAction(nameof(Index));
             }
 
@@ -73,10 +88,8 @@ namespace FlairTickets.Web.Controllers
         // POST: Airplanes/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Model,Name,Seats")] Airplane airplane)
+        public async Task<IActionResult> Edit(Airplane airplane)
         {
-            if (id != airplane.Id) return NotFound();
-
             if (ModelState.IsValid)
             {
                 try
@@ -92,6 +105,18 @@ namespace FlairTickets.Web.Controllers
                     else
                     {
                         throw;
+                    }
+                }
+                catch (DbUpdateException ex)
+                {
+                    if (ex.InnerException.Message.Contains("Cannot insert duplicate key"))
+                    {
+                        ModelState.AddModelError(
+                            string.Empty,
+                            $"There is already an {nameof(Airplane)}" +
+                            $" with this {nameof(Airplane.Name)}.");
+
+                        return View(airplane);
                     }
                 }
                 return RedirectToAction(nameof(Index));

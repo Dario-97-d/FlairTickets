@@ -37,6 +37,11 @@ namespace FlairTickets.Web.Controllers
             var user = await _userHelper.GetUserByIdAsync(id);
             if (user == null) return NotFound();
 
+            if (string.IsNullOrEmpty(user.PhoneNumber))
+            {
+                user.PhoneNumber = "n/a";
+            }
+
             return View(user);
         }
 
@@ -79,7 +84,7 @@ namespace FlairTickets.Web.Controllers
                 if (addUser.Succeeded)
                 {
                     await _userHelper.AddUserToRoleAsync(user, "Employee");
-                    
+
                     string token = await _userHelper.GeneratePasswordResetTokenAsync(user);
 
                     string tokenUrl = Url.Action(
@@ -101,7 +106,7 @@ namespace FlairTickets.Web.Controllers
                     }
 
                     // If it gets here, rollback user creation.
-                    await _userHelper.RollbackRegisteredUserAsync(user);
+                    await _userHelper.DeleteUserAsync(user);
 
                     // Could not send password reset email.
                     ModelState.AddModelError(string.Empty, "Could not send password reset email.");
@@ -164,33 +169,33 @@ namespace FlairTickets.Web.Controllers
                 user.Email = model.Email;
                 user.EmailConfirmed = false;
 
-                var updateEmployee = await _userHelper.UpdateUserAsync(user);
-                if (updateEmployee.Succeeded)
-                {
-                    string token = await _userHelper.GenerateEmailConfirmationTokenAsync(user);
+                string token = await _userHelper.GenerateEmailConfirmationTokenAsync(user);
 
-                    string tokenUrl = Url.Action(
-                        action: nameof(AccountController.ConfirmEmail),
-                        controller: "Account",
-                        values: new
-                        {
-                            userid = user.Id,
-                            token
-                        },
-                        protocol: HttpContext.Request.Scheme);
-
-                    if (!string.IsNullOrEmpty(tokenUrl))
+                string tokenUrl = Url.Action(
+                    action: nameof(AccountController.ConfirmEmail),
+                    controller: "Account",
+                    values: new
                     {
-                        var sendConfirmationEmail = _mailHelper.SendConfirmationEmail(user, tokenUrl);
-                        if (sendConfirmationEmail)
+                        userid = user.Id,
+                        token
+                    },
+                    protocol: HttpContext.Request.Scheme);
+
+                if (!string.IsNullOrEmpty(tokenUrl))
+                {
+                    var sendConfirmationEmail = _mailHelper.SendConfirmationEmail(user, tokenUrl);
+                    if (sendConfirmationEmail)
+                    {
+                        var updateEmployee = await _userHelper.UpdateUserAsync(user);
+                        if (updateEmployee.Succeeded)
                         {
                             // Success.
 
                             ViewBag.Message =
-                                $"{model.ChosenName}'s email address has been updated, " +
-                                $"and a confirmation email with a link has been sent." +
-                                $" In order to access the account, " +
-                                $"{model.ChosenName} needs to activate it through that link.";
+                            $"{model.ChosenName}'s email address has been updated, " +
+                            $"and a confirmation email with a link has been sent." +
+                            $" In order to access the account, " +
+                            $"{model.ChosenName} needs to activate it through that link.";
 
                             return View(model);
                         }
@@ -230,17 +235,10 @@ namespace FlairTickets.Web.Controllers
             var user = await _userHelper.GetUserByIdAsync(id);
             if (user == null) return NotFound();
 
-            await _userHelper.RemoveFromRoleAsync(user, "Employee");
-            
-            try
-            {
-                TempData["Message"] = $"{user.ChosenName} has been removed from Employee status.";
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            await _userHelper.DeleteUserAsync(user);
+
+            TempData["Message"] = $"{user.ChosenName}'s account has been deleted.";
+            return RedirectToAction(nameof(Index));
         }
     }
 }

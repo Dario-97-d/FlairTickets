@@ -11,6 +11,7 @@ namespace FlairTickets.Web.Helpers.Interfaces
         Task AddUserToRoleAsync(User user, string role);
         Task<IdentityResult> ChangePasswordAsync(User user, string oldPassword, string newPassword);
         Task<IdentityResult> ConfirmEmailAsync(User user, string token);
+        Task DeleteUserAsync(User user);
         Task<string> GenerateEmailConfirmationTokenAsync(User user);
         Task<string> GeneratePasswordResetTokenAsync(User user);
         Task<IEnumerable<User>> GetAllInRoleAsync(string role);
@@ -21,7 +22,6 @@ namespace FlairTickets.Web.Helpers.Interfaces
         Task LogoutAsync();
         Task<IdentityResult> RemoveFromRoleAsync(User user, string role);
         Task<IdentityResult> ResetPasswordAsync(User user, string token, string password);
-        Task RollbackRegisteredUserAsync(User user);
         Task<IdentityResult> UpdateUserAsync(User user);
     }
 }

@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FlairTickets.Web.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     public class AirportsController : Controller
     {
         private readonly IAirportRepository _airportRepository;
@@ -46,11 +46,28 @@ namespace FlairTickets.Web.Controllers
         // POST: Airports/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,IataCode,Name,City,Country")] Airport airport)
+        public async Task<IActionResult> Create(Airport airport)
         {
             if (ModelState.IsValid)
             {
-                await _airportRepository.CreateAsync(airport);
+                airport.IataCode = airport.IataCode.ToUpper();
+
+                try
+                {
+                    await _airportRepository.CreateAsync(airport);
+                }
+                catch (DbUpdateException ex)
+                {
+                    if (ex.InnerException.Message.Contains("Cannot insert duplicate key"))
+                    {
+                        ModelState.AddModelError(
+                            string.Empty,
+                            $"There is already an {nameof(Airport)}" +
+                            $" with this {nameof(Airport.IataCode)}.");
+                        
+                        return View(airport);
+                    }
+                }
                 return RedirectToAction(nameof(Index));
             }
 
@@ -73,12 +90,12 @@ namespace FlairTickets.Web.Controllers
         // POST: Airports/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,IataCode,Name,City,Country")] Airport airport)
+        public async Task<IActionResult> Edit(Airport airport)
         {
-            if (id != airport.Id) return NotFound();
-
             if (ModelState.IsValid)
             {
+                airport.IataCode = airport.IataCode.ToUpper();
+
                 try
                 {
                     await _airportRepository.UpdateAsync(airport);
@@ -92,6 +109,18 @@ namespace FlairTickets.Web.Controllers
                     else
                     {
                         throw;
+                    }
+                }
+                catch (DbUpdateException ex)
+                {
+                    if (ex.InnerException.Message.Contains("Cannot insert duplicate key"))
+                    {
+                        ModelState.AddModelError(
+                            string.Empty,
+                            $"There is already an {nameof(Airport)}" +
+                            $" with this {nameof(Airport.IataCode)}.");
+
+                        return View(airport);
                     }
                 }
                 return RedirectToAction(nameof(Index));

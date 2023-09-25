@@ -39,6 +39,11 @@ namespace FlairTickets.Web.Helpers
             return await _userManager.ConfirmEmailAsync(user, token);
         }
 
+        public async Task DeleteUserAsync(User user)
+        {
+            await _userManager.DeleteAsync(user);
+        }
+
         public async Task<string> GenerateEmailConfirmationTokenAsync(User user)
         {
             return await _userManager.GenerateEmailConfirmationTokenAsync(user);
@@ -87,11 +92,6 @@ namespace FlairTickets.Web.Helpers
         public async Task<IdentityResult> ResetPasswordAsync(User user, string token, string password)
         {
             return await _userManager.ResetPasswordAsync(user, token, password);
-        }
-
-        public async Task RollbackRegisteredUserAsync(User user)
-        {
-            await _userManager.DeleteAsync(user);
         }
 
         public async Task<IdentityResult> UpdateUserAsync(User user)

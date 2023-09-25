@@ -239,7 +239,7 @@ namespace FlairTickets.Web.Controllers
                         }
 
                         // If it gets here, rollback user creation.
-                        await _userHelper.RollbackRegisteredUserAsync(user);
+                        await _userHelper.DeleteUserAsync(user);
                     }
                 }
             }
