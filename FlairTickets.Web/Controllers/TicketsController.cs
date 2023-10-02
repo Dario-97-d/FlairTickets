@@ -83,7 +83,7 @@ namespace FlairTickets.Web.Controllers
             if (ModelState.IsValid)
             {
                 // Check Seat exists in Flight.
-                if (!await _ticketRepository.IsSeatInBoundsAsync(flight.Id, ticket.Seat))
+                if (!await _flightRepository.IsSeatInBoundsAsync(flight.Id, ticket.Seat))
                 {
                     ModelState.AddModelError(
                         string.Empty,
@@ -94,7 +94,7 @@ namespace FlairTickets.Web.Controllers
                 }
 
                 // Check Seat is available.
-                if (await _ticketRepository.IsSeatTakenAsync(flight.Id, ticket.Seat))
+                if (await _ticketRepository.IsSeatTakenAsync(flight.Id, ticket.Seat, 0))
                 {
                     ModelState.AddModelError(
                         string.Empty, $"This {nameof(Ticket.Seat)} is not available.");
@@ -181,32 +181,28 @@ namespace FlairTickets.Web.Controllers
 
 
         [HttpPost]
-        [Route("/Tickets/IsSeatTakenAsync")]
-        public async Task<IActionResult> CheckSeat(string flightid, string seat)
+        public async Task<IActionResult> CheckSeat(int flightId, int seat, int ticketId)
         {
-            if (string.IsNullOrEmpty(flightid))
-                return Json("No flight selected.");
-
-            if (string.IsNullOrEmpty(seat))
-                return Json("No seat selected.");
-
             try
             {
-                int intFlightId = int.Parse(flightid);
-                int intSeat = int.Parse(seat);
-
-                if (intFlightId < 1)
+                if (flightId < 1)
                     return Json("Invalid flight.");
 
-                if (intSeat < 1)
+                if (seat < 1)
                     return Json("Invalid seat.");
 
-                if (!await _ticketRepository.IsSeatInBoundsAsync(intFlightId, intSeat))
+                if (ticketId < 0)
+                    return Json("Invalid ticket.");
+
+                if (!await _flightRepository.IsSeatInBoundsAsync(flightId, seat))
                     return Json("This seat doesn't exist in this flight.");
 
-                return Json(await _ticketRepository.IsSeatTakenAsync(intFlightId, intSeat));
+                if (await _ticketRepository.IsSeatTakenAsync(flightId, seat, ticketId))
+                    return Json(false);
+
+                return Json(true);
             }
-            catch (System.Exception)
+            catch
             {
                 return Json("error");
             }

@@ -1,0 +1,71 @@
+﻿<script type="text/javascript">
+    $(document).ready(function () {
+
+        $('#btnSave').attr('disabled', true);
+
+        $('#CheckingSeatErrorMessage').hide();
+        $('#CheckingIsSeatAvailable').hide();
+        $('#SeatIsntTaken').hide();
+        $('#SeatIsTaken').hide();
+
+        var timer = 0;
+
+        $("#Seat").on('input', function () {
+
+            $('#btnSave').attr('disabled', true);
+
+            $('#CheckingSeatErrorMessage').hide();
+            $('#CheckingIsSeatAvailable').show();
+            $('#SeatIsntTaken').hide();
+            $('#SeatIsTaken').hide();
+
+            clearTimeout(timer);
+
+            timer = setTimeout(function () {
+
+                $('#btnSave').attr('disabled', true);
+
+                var seat = $('#Seat').val();
+
+                $.ajax({
+                    url: '@Url.Action("CheckSeat", "Tickets")',
+                    type: 'POST',
+                    dataType: 'JSON',
+                    data: { flightId: @Model.FlightDisplay.Id, seat: seat, ticketId: @Model.Id },
+                    success: function (response) {
+                        if (response == true) {
+                            $('#SeatIsntTaken').text("Seat " + seat + " is available.");
+
+                            $('#CheckingSeatErrorMessage').hide();
+                            $('#CheckingIsSeatAvailable').hide();
+                            $('#SeatIsTaken').hide();
+                            $('#SeatIsntTaken').show();
+
+                            $('#btnSave').attr('disabled', false);
+                        }
+                        else if (response == false) {
+                            $('#SeatIsTaken').text("Seat " + seat + " is taken. Choose another seat.");
+
+                            $('#CheckingSeatErrorMessage').hide();
+                            $('#CheckingIsSeatAvailable').hide();
+                            $('#SeatIsntTaken').hide();
+                            $('#SeatIsTaken').show();
+                        }
+                        else {
+                            $('#CheckingSeatErrorMessage').text(response);
+
+                            $('#CheckingSeatErrorMessage').show();
+                            $('#CheckingIsSeatAvailable').hide();
+                            $('#SeatIsntTaken').hide();
+                            $('#SeatIsTaken').hide();
+                        }
+                    },
+                    error: function () {
+                        alert("Could not determine whether seat is taken.");
+                    }
+                });
+
+            }, 500);
+        });
+    });
+</script>

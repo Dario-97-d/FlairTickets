@@ -6,5 +6,6 @@ namespace FlairTickets.Web.Data.Repository.Interfaces
     public interface IFlightRepository : IGenericRepository<Flight>
     {
         Task CreateAsync(Flight flight);
+        Task<bool> IsSeatInBoundsAsync(int flightId, int seat);
     }
 }

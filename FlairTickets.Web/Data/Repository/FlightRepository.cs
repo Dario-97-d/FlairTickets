@@ -53,5 +53,13 @@ namespace FlairTickets.Web.Data.Repository
                 .Include(f => f.Destination)
                 .FirstOrDefaultAsync(f => f.Id == id);
         }
+
+        public async Task<bool> IsSeatInBoundsAsync(int flightId, int seat)
+        {
+            return await _context.Flights
+                .Where(f => f.Id == flightId)
+                .Select(f => seat <= f.Airplane.Seats)
+                .SingleOrDefaultAsync();
+        }
     }
 }

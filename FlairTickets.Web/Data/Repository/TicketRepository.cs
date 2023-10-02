@@ -58,18 +58,10 @@ namespace FlairTickets.Web.Data.Repository
                 .FirstOrDefaultAsync(t => t.Id == id);
         }
 
-        public async Task<bool> IsSeatTakenAsync(int flightId, int seat)
+        public async Task<bool> IsSeatTakenAsync(int flightId, int seat, int ticketId)
         {
-            return await _context.Tickets.AnyAsync(t => t.Flight.Id == flightId && t.Seat == seat);
-        }
-
-        public async Task<bool> IsSeatInBoundsAsync(int flightId, int seat)
-        {
-            var flight = await _context.Flights.AsNoTracking()
-                .Include(f => f.Airplane)
-                .FirstOrDefaultAsync(f => f.Id == flightId);
-            
-            return flight.Airplane.Seats >= seat;
+            return await _context.Tickets.AnyAsync(
+                t => t.Flight.Id == flightId && t.Seat == seat && t.Id != ticketId);
         }
     }
 }

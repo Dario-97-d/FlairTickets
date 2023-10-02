@@ -9,7 +9,6 @@ namespace FlairTickets.Web.Data.Repository.Interfaces
         Task CreateAsync(Ticket ticket, Flight flight, User user);
         IQueryable<Ticket> GetAllOfUser(User user);
         Task<Ticket> GetByIdWithFlightDetailsAsync(int id);
-        Task<bool> IsSeatInBoundsAsync(int flightId, int seat);
-        Task<bool> IsSeatTakenAsync(int flightId, int seat);
+        Task<bool> IsSeatTakenAsync(int flightId, int seat, int ticketId);
     }
 }
