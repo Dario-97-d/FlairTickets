@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using FlairTickets.Web.Data.Entities;
 using FlairTickets.Web.Data.Repository.Interfaces;
+using FlairTickets.Web.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -28,10 +29,10 @@ namespace FlairTickets.Web.Controllers
         // GET: Airplanes/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null) return NotFound();
+            if (id == null) return AirplaneNotFound();
 
             var airplane = await _airplaneRepository.GetByIdAsync(id.Value);
-            if (airplane == null) return NotFound();
+            if (airplane == null) return AirplaneNotFound();
 
             return View(airplane);
         }
@@ -77,10 +78,10 @@ namespace FlairTickets.Web.Controllers
         // GET: Airplanes/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null) return NotFound();
+            if (id == null) return AirplaneNotFound();
 
             var airplane = await _airplaneRepository.GetByIdAsync(id.Value);
-            if (airplane == null) return NotFound();
+            if (airplane == null) return AirplaneNotFound();
 
             return View(airplane);
         }
@@ -100,7 +101,7 @@ namespace FlairTickets.Web.Controllers
                 {
                     if (!await _airplaneRepository.ExistsAsync(airplane.Id))
                     {
-                        return NotFound();
+                        return AirplaneNotFound();
                     }
                     else
                     {
@@ -130,10 +131,10 @@ namespace FlairTickets.Web.Controllers
         // GET: Airplanes/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null) return NotFound();
+            if (id == null) return AirplaneNotFound();
 
             var airplane = await _airplaneRepository.GetByIdAsync(id.Value);
-            if (airplane == null) return NotFound();
+            if (airplane == null) return AirplaneNotFound();
 
             return View(airplane);
         }
@@ -147,5 +148,16 @@ namespace FlairTickets.Web.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+
+        public IActionResult AirplaneNotFound()
+        {
+            var model = new NotFoundViewModel
+            {
+                Title = "Airplane not found",
+                EntityName = nameof(Airplane),
+            };
+            Response.StatusCode = StatusCodes.Status404NotFound;
+            return View(nameof(HomeController.NotFound), model);
+        }
     }
 }

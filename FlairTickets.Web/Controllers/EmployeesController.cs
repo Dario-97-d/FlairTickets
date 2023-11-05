@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using FlairTickets.Web.Data.Entities;
 using FlairTickets.Web.Helpers.Interfaces;
+using FlairTickets.Web.Models;
 using FlairTickets.Web.Models.Account;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -32,10 +33,10 @@ namespace FlairTickets.Web.Controllers
         // GET: EmployeesController/Details/5
         public async Task<IActionResult> Details(string id)
         {
-            if (string.IsNullOrEmpty(id)) return NotFound();
+            if (string.IsNullOrEmpty(id)) return EmployeeNotFound();
 
             var user = await _userHelper.GetUserByIdAsync(id);
-            if (user == null) return NotFound();
+            if (user == null) return EmployeeNotFound();
 
             if (string.IsNullOrEmpty(user.PhoneNumber))
             {
@@ -127,10 +128,10 @@ namespace FlairTickets.Web.Controllers
         // GET: EmployeesController/Edit/5
         public async Task<IActionResult> Edit(string id)
         {
-            if (string.IsNullOrEmpty(id)) return NotFound();
+            if (string.IsNullOrEmpty(id)) return EmployeeNotFound();
 
             var user = await _userHelper.GetUserByIdAsync(id);
-            if (user == null) return NotFound();
+            if (user == null) return EmployeeNotFound();
 
             var model = new EditEmployeeViewModel
             {
@@ -162,7 +163,7 @@ namespace FlairTickets.Web.Controllers
                 }
 
                 user = await _userHelper.GetUserByIdAsync(model.Id);
-                if (user == null) return NotFound();
+                if (user == null) return EmployeeNotFound();
 
                 // Update Employee.
                 user.UserName = model.Email;
@@ -217,10 +218,10 @@ namespace FlairTickets.Web.Controllers
         // GET: EmployeesController/Delete/5
         public async Task<IActionResult> Delete(string id)
         {
-            if (string.IsNullOrEmpty(id)) return NotFound();
+            if (string.IsNullOrEmpty(id)) return EmployeeNotFound();
 
             var user = await _userHelper.GetUserByIdAsync(id);
-            if (user == null) return NotFound();
+            if (user == null) return EmployeeNotFound();
 
             return View(user);
         }
@@ -230,15 +231,27 @@ namespace FlairTickets.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(string id, bool confirmed = true)
         {
-            if (string.IsNullOrEmpty(id)) return NotFound();
+            if (string.IsNullOrEmpty(id)) return EmployeeNotFound();
 
             var user = await _userHelper.GetUserByIdAsync(id);
-            if (user == null) return NotFound();
+            if (user == null) return EmployeeNotFound();
 
             await _userHelper.DeleteUserAsync(user);
 
             TempData["Message"] = $"{user.ChosenName}'s account has been deleted.";
             return RedirectToAction(nameof(Index));
+        }
+
+
+        public IActionResult EmployeeNotFound()
+        {
+            var model = new NotFoundViewModel
+            {
+                Title = "Employee not found",
+                EntityName = "Employee",
+            };
+            Response.StatusCode = StatusCodes.Status404NotFound;
+            return View(nameof(HomeController.NotFound), model);
         }
     }
 }

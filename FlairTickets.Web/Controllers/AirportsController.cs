@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using FlairTickets.Web.Data.Entities;
 using FlairTickets.Web.Data.Repository.Interfaces;
+using FlairTickets.Web.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -28,10 +29,10 @@ namespace FlairTickets.Web.Controllers
         // GET: Airports/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null) return NotFound();
+            if (id == null) return AirportNotFound();
 
             var airport = await _airportRepository.GetByIdAsync(id.Value);
-            if (airport == null) return NotFound();
+            if (airport == null) return AirportNotFound();
 
             return View(airport);
         }
@@ -79,10 +80,10 @@ namespace FlairTickets.Web.Controllers
         // GET: Airports/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null) return NotFound();
+            if (id == null) return AirportNotFound();
 
             var airport = await _airportRepository.GetByIdAsync(id.Value);
-            if (airport == null) return NotFound();
+            if (airport == null) return AirportNotFound();
 
             return View(airport);
         }
@@ -104,7 +105,7 @@ namespace FlairTickets.Web.Controllers
                 {
                     if (!await _airportRepository.ExistsAsync(airport.Id))
                     {
-                        return NotFound();
+                        return AirportNotFound();
                     }
                     else
                     {
@@ -134,10 +135,10 @@ namespace FlairTickets.Web.Controllers
         // GET: Airports/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null) return NotFound();
+            if (id == null) return AirportNotFound();
 
             var airport = await _airportRepository.GetByIdAsync(id.Value);
-            if (airport == null) return NotFound();
+            if (airport == null) return AirportNotFound();
 
             return View(airport);
         }
@@ -151,5 +152,16 @@ namespace FlairTickets.Web.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+
+        public IActionResult AirportNotFound()
+        {
+            var model = new NotFoundViewModel
+            {
+                Title = $"{nameof(Airport)} not found",
+                EntityName = nameof(Airport),
+            };
+            Response.StatusCode = StatusCodes.Status404NotFound;
+            return View(nameof(HomeController.NotFound), model);
+        }
     }
 }

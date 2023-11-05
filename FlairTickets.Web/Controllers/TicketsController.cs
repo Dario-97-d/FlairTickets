@@ -2,6 +2,7 @@
 using FlairTickets.Web.Data.Entities;
 using FlairTickets.Web.Data.Repository.Interfaces;
 using FlairTickets.Web.Helpers.Interfaces;
+using FlairTickets.Web.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -46,10 +47,10 @@ namespace FlairTickets.Web.Controllers
         // GET: Tickets/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null) return NotFound();
+            if (id == null) return TicketNotFound();
 
             var ticket = await _ticketRepository.GetByIdWithFlightDetailsAsync(id.Value);
-            if (ticket == null) return NotFound();
+            if (ticket == null) return TicketNotFound();
 
             return View(ticket);
         }
@@ -58,10 +59,10 @@ namespace FlairTickets.Web.Controllers
         // GET: Tickets/Create/{flightId}
         public async Task<IActionResult> Create(int? flightId)
         {
-            if (flightId == null) return NotFound();
+            if (flightId == null) return FlightNotFound();
 
             var flight = await _flightRepository.GetByIdAsync(flightId.Value);
-            if (flight == null) return NotFound();
+            if (flight == null) return FlightNotFound();
 
             var user = await _userHelper.GetUserByEmailAsync(User.Identity.Name);
             if (user == null) return NotFound();
@@ -78,7 +79,7 @@ namespace FlairTickets.Web.Controllers
         {
             // Get Flight from which Ticket was created.
             var flight = await _flightRepository.GetByIdAsync(flightId);
-            if (flight == null) return NotFound();
+            if (flight == null) return FlightNotFound();
 
             if (ModelState.IsValid)
             {
@@ -121,10 +122,10 @@ namespace FlairTickets.Web.Controllers
         // GET: Tickets/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null) return NotFound();
+            if (id == null) return TicketNotFound();
 
             var ticket = await _ticketRepository.GetByIdWithFlightDetailsAsync(id.Value);
-            if (ticket == null) return NotFound();
+            if (ticket == null) return TicketNotFound();
 
             return View(ticket);
         }
@@ -144,7 +145,7 @@ namespace FlairTickets.Web.Controllers
                 {
                     if (!await _ticketRepository.ExistsAsync(ticket.Id))
                     {
-                        return NotFound();
+                        return TicketNotFound();
                     }
                     else
                     {
@@ -162,10 +163,10 @@ namespace FlairTickets.Web.Controllers
         // GET: Tickets/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null) return NotFound();
+            if (id == null) return TicketNotFound();
 
             var ticket = await _ticketRepository.GetByIdWithFlightDetailsAsync(id.Value);
-            if (ticket == null) return NotFound();
+            if (ticket == null) return TicketNotFound();
 
             return View(ticket);
         }
@@ -177,6 +178,23 @@ namespace FlairTickets.Web.Controllers
         {
             await _ticketRepository.DeleteAsync(id);
             return RedirectToAction(nameof(Index));
+        }
+
+
+        public IActionResult FlightNotFound()
+        {
+            return RedirectToAction(nameof(FlightsController.FlightNotFound), "Flights");
+        }
+
+        public IActionResult TicketNotFound()
+        {
+            var model = new NotFoundViewModel
+            {
+                Title = $"{nameof(Ticket)} not found",
+                EntityName = nameof(Ticket),
+            };
+            Response.StatusCode = StatusCodes.Status404NotFound;
+            return View(nameof(HomeController.NotFound), model);
         }
 
 

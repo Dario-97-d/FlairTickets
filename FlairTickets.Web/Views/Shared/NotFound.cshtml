@@ -1,0 +1,10 @@
+﻿@model FlairTickets.Web.Models.NotFoundViewModel
+
+@{
+    ViewData["Title"] = Model?.Title ?? "Not found";
+}
+
+<h1>@ViewData["Title"]</h1>
+<p>The @(Model?.EntityName ?? "resource") you're looking for was not found.</p>
+
+<button onclick="javascript:history.back()" class="btn btn-link">Go back</button>
