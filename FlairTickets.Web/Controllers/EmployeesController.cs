@@ -23,14 +23,14 @@ namespace FlairTickets.Web.Controllers
 
 
         // GET: EmployeesController
-        public async Task<ActionResult> Index()
+        public async Task<IActionResult> Index()
         {
             return View(await _userHelper.GetAllInRoleAsync("Employee"));
         }
 
 
         // GET: EmployeesController/Details/5
-        public async Task<ActionResult> Details(string id)
+        public async Task<IActionResult> Details(string id)
         {
             if (string.IsNullOrEmpty(id)) return NotFound();
 
@@ -47,7 +47,7 @@ namespace FlairTickets.Web.Controllers
 
 
         // GET: EmployeesController/Create
-        public ActionResult Create()
+        public IActionResult Create()
         {
             return View();
         }
@@ -55,7 +55,7 @@ namespace FlairTickets.Web.Controllers
         // POST: EmployeesController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create(CreateEmployeeViewModel model)
+        public async Task<IActionResult> Create(CreateEmployeeViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -125,7 +125,7 @@ namespace FlairTickets.Web.Controllers
 
 
         // GET: EmployeesController/Edit/5
-        public async Task<ActionResult> Edit(string id)
+        public async Task<IActionResult> Edit(string id)
         {
             if (string.IsNullOrEmpty(id)) return NotFound();
 
@@ -145,7 +145,7 @@ namespace FlairTickets.Web.Controllers
         // POST: EmployeesController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit(EditEmployeeViewModel model)
+        public async Task<IActionResult> Edit(EditEmployeeViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -215,7 +215,7 @@ namespace FlairTickets.Web.Controllers
 
 
         // GET: EmployeesController/Delete/5
-        public async Task<ActionResult> Delete(string id)
+        public async Task<IActionResult> Delete(string id)
         {
             if (string.IsNullOrEmpty(id)) return NotFound();
 
@@ -228,7 +228,7 @@ namespace FlairTickets.Web.Controllers
         // POST: EmployeesController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Delete(string id, bool confirmed = true)
+        public async Task<IActionResult> Delete(string id, bool confirmed = true)
         {
             if (string.IsNullOrEmpty(id)) return NotFound();
 
