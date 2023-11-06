@@ -1,16 +1,18 @@
-﻿@model FlairTickets.Web.Data.Entities.Ticket
+﻿@model FlairTickets.Web.Models.Ticket.InputTicketViewModel
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Buy ticket";
 }
 
-<h1>Create</h1>
+<h2><partial name="_GoBackFAIcon" /> @ViewData["Title"]</h2>
 
-<partial name="_Input" view-data="ViewData" />
+<form asp-action="Create" asp-route-flightId="@Model.FlightDisplay.Id">
+    <partial name="_Input" view-data="ViewData" />
+</form>
 
 @section Scripts{
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
         await Html.RenderPartialAsync("_CheckTicketSeat");
-                            }
+    }
 }

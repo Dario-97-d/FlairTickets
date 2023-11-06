@@ -1,16 +1,44 @@
-﻿@model IEnumerable<FlairTickets.Web.Data.Entities.Flight>
+﻿@model FlairTickets.Web.Models.Flight.IndexFlightViewModel
 
 @{
     ViewData["Title"] = "Flights";
 }
 
 <h1>@ViewData["Title"]</h1>
+<div>
 
-@if (User.Identity.IsAuthenticated && User.IsInRole("Employee"))
+    <!-- Toggle Search button -->
+    <button onclick="toggleSearchForm(this)" class="btn btn-light border ml-2">Search <i class="fa fa-toggle-on"></i></button>
+    
+    <!-- Toggle Search script -->
+    <script type="text/javascript">
+        function toggleSearchForm(elm) {
+            $("#SearchForm").toggle();
+
+            var elmIcon = elm.lastChild;
+
+            if (elmIcon.classList.contains("fa-toggle-on")) {
+                elmIcon.classList.add("fa-toggle-off");
+                elmIcon.classList.remove("fa-toggle-on");
+            }
+            else {
+                elmIcon.classList.add("fa-toggle-on");
+                elmIcon.classList.remove("fa-toggle-off");
+            }
+        };
+    </script>
+
+    @if (ViewBag.Role == "Employee")
 {
-    <p>
-        <a asp-action="Create">Create New</a>
-    </p>
-}
+        <a asp-action="Create" class="btn btn-primary">Create New</a>
+    }
+</div>
 
-<partial name="@($"_Table{ViewBag.Role}")" />
+<partial name="_SearchForm" for="SearchFlight" />
+
+<partial name="@($"_Table{ViewBag.Role}")" for="Flights" />
+@section Scripts{
+    @{
+        await Html.RenderPartialAsync("_RemoveUnusedInputsFromSearchUrl");
+}
+}

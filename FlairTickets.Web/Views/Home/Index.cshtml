@@ -1,4 +1,6 @@
-﻿@{
+﻿@model FlairTickets.Web.Models.Flight.SearchFlightViewModel
+
+@{
     ViewData["Title"] = "Home Page";
 }
 
@@ -6,5 +8,28 @@
 
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    
+    @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+    {
+        <h3>Admin</h3>
+        <p>Manages Airplanes, Airports and Employees.</p>
+    }
+    else if (User.Identity.IsAuthenticated && User.IsInRole("Employee"))
+    {
+        <h3>Employee</h3>
+        <p>Manages Flights.</p>
+    }
+    else
+    {
+        <h3>Search flights</h3>
+        <div class="form-group">
+            <partial name="/Views/Flights/_SearchForm.cshtml" />
+        </div>
+    }
 </div>
+
+@section Scripts{
+    @{
+        await Html.RenderPartialAsync("_RemoveUnusedInputsFromSearchUrl");
+    }
+}

@@ -1,53 +1,51 @@
-﻿@model FlairTickets.Web.Data.Entities.Ticket
+﻿@model FlairTickets.Web.Models.Ticket.InputTicketViewModel
 
-<h4>Ticket</h4>
-<hr />
-<form asp-action="@ViewData["Title"]">
-    <div class="row">
+
+<div class="row">
         
-        <div class="col-md-4">
-            <h4>Flight</h4>
-            <hr />
+    <div class="col-md-8">
+        <h4><i class="fa fa-plane"></i> Flight</h4>
+        <hr />
 
-            <!-- Ticket's Flight Id -->
-            <input type="hidden" name="flightId" value="@Model.Flight?.Id" />
+        <!-- Ticket's Flight -->
+        <partial name="/Views/Flights/_Display.cshtml" for="FlightDisplay" />
+        <input asp-for="FlightDisplay.Id" hidden />
+        <input asp-for="FlightDisplay.Number" hidden />
+        <input asp-for="FlightDisplay.DateTime" hidden />
+        <input asp-for="FlightDisplay.OriginAirport" hidden />
+        <input asp-for="FlightDisplay.DestinationAirport" hidden />
+        <input asp-for="FlightDisplay.Airplane" hidden />
+    </div>
 
-            <partial name="/Views/Flights/_Display.cshtml" for="Flight" />
+    <div class="col-md-4">
+            
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <!-- Customer -->
+        <h4><i class="fa fa-user"></i> User</h4>
+        <p>@Model.UserChosenName<br />@Model.UserEmail</p>
+        <input asp-for="UserChosenName" hidden />
+        <input asp-for="UserEmail" hidden />
+
+        <h4><i class="fa fa-edit"></i> Ticket</h4>
+        <input asp-for="Id" hidden />
+
+        <!-- Ticket's Seat -->
+        <div class="form-group">
+            <label class="control-label">Seat</label>
+            <input asp-for="MaxSeat" hidden />
+            <input asp-for="Seat" class="form-control" min="0" max="@Model.MaxSeat" />
+            <span id="CheckingSeatErrorMessage" class="text-warning"></span>
+            <span id="CheckingIsSeatAvailable" class="text-gray">Checking availability...</span>
+            <span id="SeatIsntTaken" class="text-success"></span>
+            <span id="SeatIsTaken" class="text-danger"></span>
         </div>
-
-        <div class="col-md-4">
             
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            
-                <!-- Customer -->
-                <h4>User</h4>
-                <p>@Model.User?.ChosenName</p>
-
-                <h4>Ticket</h4>
-
-                <!-- Ticket Id -->
-                <input type="hidden" asp-for="Id" />
-
-                <!-- Ticket's Seat -->
-                <div class="form-group">
-                    <label asp-for="Seat" class="control-label"></label>
-                    <input asp-for="Seat" class="form-control" min="0" max="@Model.Flight.Airplane.Seats" />
-                    <span id="CheckingSeatErrorMessage" class="text-warning"></span>
-                    <span id="CheckingIsSeatAvailable" class="text-gray">Checking availability...</span>
-                    <span id="SeatIsntTaken" class="text-success"></span>
-                    <span id="SeatIsTaken" class="text-danger"></span>
-                </div>
-            
-                <!-- Submit -->
-                <div class="form-group">
-            <button id="btnSave" class="btn btn-primary">Save</button>
-                </div>
-
+        <!-- Submit -->
+        <div class="form-group">
+            <button id="btnSave" class="btn btn-primary"><i class="fa fa-save"></i> Save</button>
         </div>
 
     </div>
-</form>
 
-<div>
-    <a asp-controller="Flights" asp-action="Index">Back to Flights</a>
 </div>

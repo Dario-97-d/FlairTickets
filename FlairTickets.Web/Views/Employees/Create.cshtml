@@ -11,7 +11,10 @@
     <div class="col-md-4">
         <form asp-action="Create">
 
+            @if (ViewBag.Message != null)
+            {
             <p class="text-success">@Html.Raw(ViewBag.Message)</p>
+            }
 
             <div asp-validation-summary="ModelOnly"></div>
 
@@ -59,10 +62,9 @@
 
             <p class="text-success">@ViewBag.UserMessage</p>
 
-            <!-- Update __ Back to Employees -->
+            <!-- Update -->
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
-                <a asp-action="Index" class="btn btn-success">Back to Employees</a>
             </div>
 
         </form>

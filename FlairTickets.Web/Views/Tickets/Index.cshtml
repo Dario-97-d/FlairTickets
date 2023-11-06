@@ -1,63 +1,53 @@
-﻿@model IEnumerable<FlairTickets.Web.Data.Entities.Ticket>
+﻿@model IEnumerable<FlairTickets.Web.Models.Ticket.IndexRowTicketViewModel>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Tickets";
 }
 
-<h1>Index</h1>
+<h1>@((User.IsInRole("Customer") ? $"My " : string.Empty) + ViewData["Title"])</h1>
 
 <p>
-    <a asp-controller="Flights">See flights</a>
+    <a asp-controller="Home" class="btn btn-link">Search flights</a>
 </p>
 <table class="table">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Flight.Number)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Flight.DateOnly)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Flight.TimeOnly)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Flight.Origin.ComboName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Flight.Destination.ComboName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Seat)
-            </th>
-            <th></th>
+            <th><!--icon--></th>
+            <th><i class="fa fa-calendar-days"></i> Day</th>
+            <th><i class="fa fa-clock"></i> Hour</th>
+            <th><i class="fa fa-plane-departure"></i> Origin</th>
+            <th><i class="fa fa-plane-arrival"></i> Destination</th>
+            <th><i class="fa fa-circle-info"></i> Flight</th>
+            <th><i class="fa fa-edit"></i> Seat</th>
+            <th><!--Options--></th>
         </tr>
     </thead>
     <tbody>
 @foreach (var item in Model) {
         <tr>
+            <td><i class="fa @(item.IsPast ? "fa-calendar-check" : "fa-plane-up")"></i></td>
             <td>
-                @Html.DisplayFor(modelItem => item.Flight.Number)
+                @Html.DisplayFor(modelItem => item.Date)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Flight.DateOnly)
+                @Html.DisplayFor(modelItem => item.Hour)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Flight.TimeOnly)
+                @Html.DisplayFor(modelItem => item.Origin)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Flight.Origin.ComboName)
+                @Html.DisplayFor(modelItem => item.Destination)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Flight.Destination.ComboName)
+                @Html.DisplayFor(modelItem => item.FlightNumber)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Seat)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-success"><i class="fa fa-list"></i></a>
+                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary @(item.IsEditable ? "" : "disabled")"><i class="fa fa-edit"></i></a>
+                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger @(item.IsDeletable ? "" : "disabled")"><i class="fa fa-xmark"></i></a>
             </td>
         </tr>
 }

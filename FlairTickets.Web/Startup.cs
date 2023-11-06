@@ -3,6 +3,8 @@ using FlairTickets.Web.Data.Entities;
 using FlairTickets.Web.Data.Repository;
 using FlairTickets.Web.Data.Repository.Interfaces;
 using FlairTickets.Web.Helpers;
+using FlairTickets.Web.Helpers.ControllerHelpers;
+using FlairTickets.Web.Helpers.ControllerHelpers.Interfaces;
 using FlairTickets.Web.Helpers.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -45,14 +47,25 @@ namespace FlairTickets.Web
 
             services.AddTransient<SeedDb>();
 
+            // Controller Helpers
+            services.AddScoped<IControllerHelpers, ControllerHelpers>();
+            services.AddScoped<IFlightControllerHelper, FlightControllerHelper>();
+            services.AddScoped<ITicketControllerHelper, TicketControllerHelper>();
+
+            // Other helpers
+            services.AddScoped<IHelpers, Helpers.Helpers>();
             services.AddScoped<IConverterHelper, ConverterHelper>();
             services.AddScoped<IMailHelper, MailHelper>();
             services.AddScoped<IUserHelper, UserHelper>();
 
+            // Repository
             services.AddScoped<IAirplaneRepository, AirplaneRepository>();
             services.AddScoped<IAirportRepository, AirportRepository>();
             services.AddScoped<IFlightRepository, FlightRepository>();
             services.AddScoped<ITicketRepository, TicketRepository>();
+
+            // Data Unit of Work
+            services.AddScoped<IDataUnit, DataUnit>();
 
             services.AddControllersWithViews();
 

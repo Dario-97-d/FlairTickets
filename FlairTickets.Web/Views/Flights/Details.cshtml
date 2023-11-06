@@ -1,20 +1,32 @@
-﻿@model FlairTickets.Web.Data.Entities.Flight
+﻿@model FlairTickets.Web.Models.Flight.DisplayFlightViewModel
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = $"Flight {Model.Number}";
 }
 
-<h1>Details</h1>
+<h2><partial name="_GoBackFAIcon" /> @ViewData["Title"]</h2>
 
 <div>
-    <h4>Flight | <a asp-controller="Tickets" asp-action="Create" asp-route-flightId="@Model.Id">Buy Ticket</a></h4>
+    @if (User.Identity.IsAuthenticated)
+    {
+        if (User.IsInRole("Customer"))
+        {
+            <h4><a asp-controller="Tickets" asp-action="Create" asp-route-flightId="@Model.Id">Buy Ticket</a></h4>
+        }
+    }
+    else
+    {
+        <p>In order to buy a Ticket, you need to Login or Sign up.</p>
+    }
     <hr />
     <partial name="_Display" />
 </div>
 <div>
     @if (User.Identity.IsAuthenticated && User.IsInRole("Employee"))
     {
-        <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a>
+        <div class="form-group">
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary"><i class="fa fa-edit"></i> Edit</a>
+            <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger"><i class="fa fa-trash"></i> Delete</a>
+        </div>
     }
-    <a asp-action="Index">Back to List</a>
 </div>

@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
 using FlairTickets.Web.Data.Entities;
@@ -17,41 +17,12 @@ namespace FlairTickets.Web.Data.Repository
         }
 
 
-        public override async Task CreateAsync(Flight flight)
+        public async Task<bool> IsFlightAfterDateTimeAsync(int flightId, DateTime dateTime)
         {
-            await _context.Flights.AddAsync(flight);
-
-            var navProps = new List<IEntity>
-            {
-                flight.Airplane,
-                flight.Origin,
-                flight.Destination,
-            };
-
-            navProps.ForEach(np =>
-            {
-                if (np != null)
-                    _context.Entry(np).State = EntityState.Unchanged;
-            });
-
-            await _context.SaveChangesAsync();
-        }
-
-        public override IQueryable<Flight> GetAll()
-        {
-            return _context.Flights.AsNoTracking()
-                .Include(f => f.Airplane)
-                .Include(f => f.Origin)
-                .Include(f => f.Destination);
-        }
-
-        public override async Task<Flight> GetByIdAsync(int id)
-        {
-            return await _context.Flights.AsNoTracking()
-                .Include(f => f.Airplane)
-                .Include(f => f.Origin)
-                .Include(f => f.Destination)
-                .FirstOrDefaultAsync(f => f.Id == id);
+            return await _context.Flights
+                .Where(f => f.Id == flightId)
+                .Select(f => EF.Functions.DateDiffSecond(f.DateTime, dateTime) > 0)
+                .SingleOrDefaultAsync();
         }
 
         public async Task<bool> IsSeatInBoundsAsync(int flightId, int seat)

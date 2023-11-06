@@ -1,0 +1,13 @@
+﻿<script type="text/javascript">
+    // Remove the name attribute of empty input elements.
+    // This makes the URL cleaner, including only the given inputs when Searching.
+    $(document).ready(function () {
+        $("#SearchForm").submit(function () {
+            $("input").each(function (index, obj) {
+                if ($(obj).val() == "") {
+                    $(obj).removeAttr("name");
+                }
+            });
+        });
+    });
+</script>

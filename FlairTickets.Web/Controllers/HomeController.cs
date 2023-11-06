@@ -1,25 +1,32 @@
-﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading.Tasks;
+using FlairTickets.Web.Data;
 using FlairTickets.Web.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace FlairTickets.Web.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly IDataUnit _dataUnit;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(IDataUnit dataUnit)
         {
-            _logger = logger;
+            _dataUnit = dataUnit;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
+            if (User.Identity.IsAuthenticated)
+            {
+                if (User.IsInRole("Admin") || User.IsInRole("Employee"))
+        {
+            return View();
+        }
+            }
+
+            ViewBag.ComboAirports = await _dataUnit.Airports.GetComboAirportsIataCodeAsync();
+
             return View();
         }
 

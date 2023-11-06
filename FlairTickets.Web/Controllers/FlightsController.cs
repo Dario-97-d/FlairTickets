@@ -1,9 +1,9 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using FlairTickets.Web.Data.Entities;
-using FlairTickets.Web.Data.Repository.Interfaces;
-using FlairTickets.Web.Helpers.Interfaces;
+using FlairTickets.Web.Helpers.ControllerHelpers.Interfaces;
 using FlairTickets.Web.Models;
-using FlairTickets.Web.Models.Entities;
+using FlairTickets.Web.Models.Flight;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -13,29 +13,43 @@ namespace FlairTickets.Web.Controllers
 {
     public class FlightsController : Controller
     {
-        private readonly IConverterHelper _converterHelper;
+        private readonly IControllerHelpers _controllerHelper;
 
-        private readonly IAirplaneRepository _airplaneRepository;
-        private readonly IAirportRepository _airportRepository;
-        private readonly IFlightRepository _flightRepository;
-
-        public FlightsController(
-            IConverterHelper converterHelper,
-            IAirplaneRepository airplaneRepository,
-            IAirportRepository airportRepository,
-            IFlightRepository flightRepository)
+        public FlightsController(IControllerHelpers controllerHelper)
         {
-            _converterHelper = converterHelper;
-
-            _airplaneRepository = airplaneRepository;
-            _airportRepository = airportRepository;
-            _flightRepository = flightRepository;
+            _controllerHelper = controllerHelper;
         }
 
 
         // GET: Flights
-        public IActionResult Index()
+        public async Task<IActionResult> Index(SearchFlightViewModel? searchModel)
         {
+            IndexFlightViewModel model = null;
+
+            try
+            {
+                model = await _controllerHelper.Flights.GetViewModelForIndexAsync(searchModel);
+            }
+            catch (System.FormatException ex)
+            {
+                TempData["LayoutMessage"] = ex.Message switch
+                {
+                    "Date format error" => $"Date format error. Re-enter date and try again.",
+                    "Time format error" => $"Hour format error. Re-enter hour and try again.",
+                    _ => null
+                };
+            }
+            catch
+            {
+                TempData["LayoutMessage"] = "Something went wrong.";
+            }
+
+            model ??= new IndexFlightViewModel
+            {
+                Flights = new List<IndexRowFlightViewModel>(),
+                SearchFlight = searchModel,
+            };
+
             // Assign role for partial view of index table
             if (!User.Identity.IsAuthenticated)
                 ViewBag.Role = "Offline";
@@ -44,7 +58,9 @@ namespace FlairTickets.Web.Controllers
             else
                 ViewBag.Role = "Customer";
 
-            return View(_flightRepository.GetAll());
+            ViewBag.ComboAirports = await _controllerHelper.Flights.GetComboAirportsIataCodeAsync();
+
+            return View(nameof(Index), model);
         }
 
 
@@ -53,42 +69,51 @@ namespace FlairTickets.Web.Controllers
         {
             if (id == null) return FlightNotFound();
 
-            var flight = await _flightRepository.GetByIdAsync(id.Value);
-            if (flight == null) return FlightNotFound();
+            var model = await _controllerHelper.Flights.GetViewModelForDisplayAsync(id.Value);
+            if (model == null) return FlightNotFound();
 
-            if (User.Identity.IsAuthenticated)
-                return View(flight);
-            else
-                return View("NotAuthDetails", flight);
+            return View(model);
         }
 
 
         // GET: Flights/Create
         [Authorize(Roles = "Employee")]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            var model = new FlightViewModel
-            {
-                ComboAirports = _airportRepository.GetComboAirports(),
-                ComboAirplanes = _airplaneRepository.GetComboAirplanes()
-            };
-            return View(model);
+            (ViewBag.ComboAirports, ViewBag.ComboAirplanes) =
+                await _controllerHelper.Flights.GetComboAirportsAndAirplanesAsync();
+
+            return View();
         }
 
         // POST: Flights/Create
         [Authorize(Roles = "Employee")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(FlightViewModel model)
+        public async Task<IActionResult> Create(InputFlightViewModel model)
         {
             if (ModelState.IsValid)
             {
-                var flight = await _converterHelper.ViewModelToFlightAsync(model);
-                await _flightRepository.CreateAsync(flight);
+                try
+                {
+                    await _controllerHelper.Flights.CreateFlightAsync(model);
+
+                    if (model.OriginAirportIataCode == model.DestinationAirportIataCode)
+                    {
+                        TempData["LayoutMessage"] =
+                            "The flight just created has the same Airport" +
+                            " for both Origin and Destination.";
+                    }
                 return RedirectToAction(nameof(Index));
+            }
+                catch { }
             }
 
             ModelState.AddModelError(string.Empty, $"Could not create {nameof(Flight)}.");
+
+            (ViewBag.ComboAirports, ViewBag.ComboAirplanes) =
+                            await _controllerHelper.Flights.GetComboAirportsAndAirplanesAsync();
+
             return View(model);
         }
 
@@ -99,13 +124,11 @@ namespace FlairTickets.Web.Controllers
         {
             if (id == null) return FlightNotFound();
 
-            var flight = await _flightRepository.GetByIdAsync(id.Value);
-            if (flight == null) return FlightNotFound();
+            var model = await _controllerHelper.Flights.GetViewModelForInputAsync(id.Value);
+            if (model == null) return FlightNotFound();
 
-            var model = _converterHelper.FlightToViewModel(flight);
-
-            model.ComboAirplanes = _airplaneRepository.GetComboAirplanes();
-            model.ComboAirports = _airportRepository.GetComboAirports();
+            (ViewBag.ComboAirports, ViewBag.ComboAirplanes) =
+                await _controllerHelper.Flights.GetComboAirportsAndAirplanesAsync();
 
             return View(model);
         }
@@ -114,31 +137,28 @@ namespace FlairTickets.Web.Controllers
         [Authorize(Roles = "Employee")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(FlightViewModel model)
+        public async Task<IActionResult> Edit(InputFlightViewModel model)
         {
             if (ModelState.IsValid)
             {
-                var flight = await _converterHelper.ViewModelToFlightAsync(model);
-
                 try
                 {
-                    await _flightRepository.UpdateAsync(flight);
+                    await _controllerHelper.Flights.UpdateFlightAsync(model);
                     return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!await _flightRepository.ExistsAsync(model.Id))
-                    {
+                    if (!await _controllerHelper.Flights.FlightExistsAsync(model.Id))
                         return FlightNotFound();
                     }
-                    else
-                    {
-                        throw;
+                catch { }
                     }
-                }
-            }
 
             ModelState.AddModelError(string.Empty, $"Could not update {nameof(Flight)}.");
+
+            (ViewBag.ComboAirports, ViewBag.ComboAirplanes) =
+                await _controllerHelper.Flights.GetComboAirportsAndAirplanesAsync();
+
             return View(model);
         }
 
@@ -149,10 +169,10 @@ namespace FlairTickets.Web.Controllers
         {
             if (id == null) return FlightNotFound();
 
-            var flight = await _flightRepository.GetByIdAsync(id.Value);
-            if (flight == null) return FlightNotFound();
+            var model = await _controllerHelper.Flights.GetViewModelForDisplayAsync(id.Value);
+            if (model == null) return FlightNotFound();
 
-            return View(flight);
+            return View(model);
         }
 
         // POST: Flights/Delete/5
@@ -161,10 +181,15 @@ namespace FlairTickets.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            await _flightRepository.DeleteAsync(id);
+            await _controllerHelper.Flights.DeleteFlightAsync(id);
             return RedirectToAction(nameof(Index));
         }
 
+
+        public async Task<IActionResult> Search(SearchFlightViewModel model)
+        {
+            return await Index(model);
+        }
 
         public IActionResult FlightNotFound()
         {

@@ -1,15 +1,20 @@
-﻿@model FlairTickets.Web.Data.Entities.Ticket
+﻿@model FlairTickets.Web.Models.Ticket.DisplayTicketViewModel
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Ticket";
 }
 
-<h1>Details</h1>
+<h2><partial name="_GoBackFAIcon" /> @ViewData["Title"]</h2>
 
 <div>
     <partial name="_Display" />
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <div class="form-group">
+        
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary@(Model.IsEditable ? "" : " disabled")"><i class="fa fa-edit"></i> Change seat</a>
+
+        <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger@(Model.IsDeletable ? "" : " disabled")"><i class="fa fa-xmark"></i> Cancel ticket</a>
+
+    </div>
 </div>

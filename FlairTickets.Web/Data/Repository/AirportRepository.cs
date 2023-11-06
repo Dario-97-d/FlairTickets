@@ -18,15 +18,25 @@ namespace FlairTickets.Web.Data.Repository
         }
 
 
-        public IEnumerable<SelectListItem> GetComboAirports()
+        public async Task<IEnumerable<SelectListItem>> GetComboAirportsIataCodeAsync()
         {
-            return _context.Airports
+            return await _context.Airports
                 .AsNoTracking()
+                .OrderBy(a => a.City)
+                .ThenBy(a => a.IataCode)
                 .Select(a => new SelectListItem
                 {
-                    Value = a.Id.ToString(),
+                    Value = a.IataCode.ToString(),
                     Text = a.ComboName,
-                });
+                }).ToListAsync();
+        }
+
+        public async Task<int> GetIdFromIataCodeAsync(string iataCode)
+        {
+            return await _context.Airports
+                .Where(a => a.IataCode == iataCode)
+                .Select(a => a.Id)
+                .FirstOrDefaultAsync();
         }
     }
 }

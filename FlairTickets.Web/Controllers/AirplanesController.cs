@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
+using FlairTickets.Web.Data;
 using FlairTickets.Web.Data.Entities;
-using FlairTickets.Web.Data.Repository.Interfaces;
 using FlairTickets.Web.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -12,18 +12,18 @@ namespace FlairTickets.Web.Controllers
     [Authorize(Roles = "Admin")]
     public class AirplanesController : Controller
     {
-        private readonly IAirplaneRepository _airplaneRepository;
+        private readonly IDataUnit _dataUnit;
 
-        public AirplanesController(IAirplaneRepository airplaneRepository)
+        public AirplanesController(IDataUnit dataUnit)
         {
-            _airplaneRepository = airplaneRepository;
+            _dataUnit = dataUnit;
         }
 
 
         // GET: Airplanes
         public IActionResult Index()
         {
-            return View(_airplaneRepository.GetAll());
+            return View(_dataUnit.Airplanes.GetAll());
         }
 
 
@@ -32,7 +32,7 @@ namespace FlairTickets.Web.Controllers
         {
             if (id == null) return AirplaneNotFound();
 
-            var airplane = await _airplaneRepository.GetByIdAsync(id.Value);
+            var airplane = await _dataUnit.Airplanes.GetByIdAsync(id.Value);
             if (airplane == null) return AirplaneNotFound();
 
             return View(airplane);
@@ -54,7 +54,7 @@ namespace FlairTickets.Web.Controllers
             {
                 try
                 {
-                    await _airplaneRepository.CreateAsync(airplane);
+                    await _dataUnit.Airplanes.CreateAsync(airplane);
                 }
                 catch (DbUpdateException ex)
                 {
@@ -81,7 +81,7 @@ namespace FlairTickets.Web.Controllers
         {
             if (id == null) return AirplaneNotFound();
 
-            var airplane = await _airplaneRepository.GetByIdAsync(id.Value);
+            var airplane = await _dataUnit.Airplanes.GetByIdAsync(id.Value);
             if (airplane == null) return AirplaneNotFound();
 
             return View(airplane);
@@ -96,11 +96,11 @@ namespace FlairTickets.Web.Controllers
             {
                 try
                 {
-                    await _airplaneRepository.UpdateAsync(airplane);
+                    await _dataUnit.Airplanes.UpdateAsync(airplane);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!await _airplaneRepository.ExistsAsync(airplane.Id))
+                    if (!await _dataUnit.Airplanes.ExistsAsync(airplane.Id))
                     {
                         return AirplaneNotFound();
                     }
@@ -134,7 +134,7 @@ namespace FlairTickets.Web.Controllers
         {
             if (id == null) return AirplaneNotFound();
 
-            var airplane = await _airplaneRepository.GetByIdAsync(id.Value);
+            var airplane = await _dataUnit.Airplanes.GetByIdAsync(id.Value);
             if (airplane == null) return AirplaneNotFound();
 
             return View(airplane);
@@ -145,7 +145,7 @@ namespace FlairTickets.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            await _airplaneRepository.DeleteAsync(id);
+            await _dataUnit.Airplanes.DeleteAsync(id);
             return RedirectToAction(nameof(Index));
         }
 

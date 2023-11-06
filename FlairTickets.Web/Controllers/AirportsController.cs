@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
+using FlairTickets.Web.Data;
 using FlairTickets.Web.Data.Entities;
-using FlairTickets.Web.Data.Repository.Interfaces;
 using FlairTickets.Web.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -12,18 +12,18 @@ namespace FlairTickets.Web.Controllers
     [Authorize(Roles = "Admin")]
     public class AirportsController : Controller
     {
-        private readonly IAirportRepository _airportRepository;
+        private readonly IDataUnit _dataUnit;
 
-        public AirportsController(IAirportRepository airportRepository)
+        public AirportsController(IDataUnit dataUnit)
         {
-            _airportRepository = airportRepository;
+            _dataUnit = dataUnit;
         }
 
 
         // GET: Airports
         public IActionResult Index()
         {
-            return View(_airportRepository.GetAll());
+            return View(_dataUnit.Airports.GetAll());
         }
 
 
@@ -32,7 +32,7 @@ namespace FlairTickets.Web.Controllers
         {
             if (id == null) return AirportNotFound();
 
-            var airport = await _airportRepository.GetByIdAsync(id.Value);
+            var airport = await _dataUnit.Airports.GetByIdAsync(id.Value);
             if (airport == null) return AirportNotFound();
 
             return View(airport);
@@ -56,7 +56,7 @@ namespace FlairTickets.Web.Controllers
 
                 try
                 {
-                    await _airportRepository.CreateAsync(airport);
+                    await _dataUnit.Airports.CreateAsync(airport);
                 }
                 catch (DbUpdateException ex)
                 {
@@ -66,7 +66,7 @@ namespace FlairTickets.Web.Controllers
                             string.Empty,
                             $"There is already an {nameof(Airport)}" +
                             $" with this {nameof(Airport.IataCode)}.");
-                        
+
                         return View(airport);
                     }
                 }
@@ -83,7 +83,7 @@ namespace FlairTickets.Web.Controllers
         {
             if (id == null) return AirportNotFound();
 
-            var airport = await _airportRepository.GetByIdAsync(id.Value);
+            var airport = await _dataUnit.Airports.GetByIdAsync(id.Value);
             if (airport == null) return AirportNotFound();
 
             return View(airport);
@@ -100,11 +100,11 @@ namespace FlairTickets.Web.Controllers
 
                 try
                 {
-                    await _airportRepository.UpdateAsync(airport);
+                    await _dataUnit.Airports.UpdateAsync(airport);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!await _airportRepository.ExistsAsync(airport.Id))
+                    if (!await _dataUnit.Airports.ExistsAsync(airport.Id))
                     {
                         return AirportNotFound();
                     }
@@ -138,7 +138,7 @@ namespace FlairTickets.Web.Controllers
         {
             if (id == null) return AirportNotFound();
 
-            var airport = await _airportRepository.GetByIdAsync(id.Value);
+            var airport = await _dataUnit.Airports.GetByIdAsync(id.Value);
             if (airport == null) return AirportNotFound();
 
             return View(airport);
@@ -149,7 +149,7 @@ namespace FlairTickets.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            await _airportRepository.DeleteAsync(id);
+            await _dataUnit.Airports.DeleteAsync(id);
             return RedirectToAction(nameof(Index));
         }
 

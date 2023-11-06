@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using FlairTickets.Web.Data.Entities;
 using FlairTickets.Web.Helpers.Interfaces;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace FlairTickets.Web.Helpers
 {
@@ -67,6 +69,14 @@ namespace FlairTickets.Web.Helpers
         public async Task<User> GetUserByIdAsync(string id)
         {
             return await _userManager.FindByIdAsync(id);
+        }
+
+        public async Task<string> GetUserChosenNameAsync(string email)
+        {
+            return await _userManager.Users
+                .Where(u => u.Email == email)
+                .Select(u => u.ChosenName)
+                .FirstOrDefaultAsync();
         }
 
         public async Task<bool> IsUserInRoleAsync(User user, string role)

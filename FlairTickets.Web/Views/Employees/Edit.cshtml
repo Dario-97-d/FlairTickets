@@ -31,7 +31,7 @@
             <!-- Update __ Back to Employees -->
             <div class="form-group">
                 <input type="submit" value="Edit" class="btn btn-primary" />
-                <a asp-action="Index" class="btn btn-success">Back to employees</a>
+                <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-success">Back to Employee</a>
             </div>
 
         </form>

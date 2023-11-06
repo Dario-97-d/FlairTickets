@@ -1,8 +1,9 @@
+﻿using System;
 ﻿using System.Threading.Tasks;
 using FlairTickets.Web.Data.Entities;
-using FlairTickets.Web.Data.Repository.Interfaces;
-using FlairTickets.Web.Helpers.Interfaces;
+using FlairTickets.Web.Helpers.ControllerHelpers.Interfaces;
 using FlairTickets.Web.Models;
+using FlairTickets.Web.Models.Ticket;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -10,38 +11,25 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FlairTickets.Web.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Customer,Admin")]
     public class TicketsController : Controller
     {
-        private readonly IUserHelper _userHelper;
-        private readonly IFlightRepository _flightRepository;
-        private readonly ITicketRepository _ticketRepository;
+        private readonly IControllerHelpers _controllerHelper;
 
-        public TicketsController(
-            IUserHelper userHelper,
-            IFlightRepository flightRepository,
-            ITicketRepository ticketRepository)
+        public TicketsController(IControllerHelpers controllerHelper)
         {
-            _userHelper = userHelper;
-            _flightRepository = flightRepository;
-            _ticketRepository = ticketRepository;
+            _controllerHelper = controllerHelper;
         }
 
 
         // GET: Tickets
         public async Task<IActionResult> Index()
         {
-            if (User.IsInRole("Admin"))
-        {
-                // Success.
-            return View(_ticketRepository.GetAll());
-        }
+            var tickets = User.IsInRole("Admin")
+                ? await _controllerHelper.Tickets.GetTicketsForIndexAsync()
+                : await _controllerHelper.Tickets.GetTicketsForIndexAsync(User.Identity.Name);
 
-            var user = await _userHelper.GetUserByEmailAsync(User.Identity.Name);
-            if (user == null) return NotFound();
-
-            // Success.
-            return View(_ticketRepository.GetAllOfUser(user));
+            return View(tickets);
         }
 
 
@@ -50,73 +38,72 @@ namespace FlairTickets.Web.Controllers
         {
             if (id == null) return TicketNotFound();
 
-            var ticket = await _ticketRepository.GetByIdWithFlightDetailsAsync(id.Value);
-            if (ticket == null) return TicketNotFound();
+            var model = User.IsInRole("Admin")
+                ? await _controllerHelper.Tickets.GetViewModelForDisplayAsync(id.Value)
+                : await _controllerHelper.Tickets
+                    .GetViewModelForDisplayAsync(id.Value, User.Identity.Name);
 
-            return View(ticket);
+            if (model == null) return TicketNotFound();
+
+            return View(model);
         }
 
 
-        // GET: Tickets/Create/{flightId}
+        // GET: Tickets/Create?flightId={flightId}
         public async Task<IActionResult> Create(int? flightId)
         {
             if (flightId == null) return FlightNotFound();
 
-            var flight = await _flightRepository.GetByIdAsync(flightId.Value);
-            if (flight == null) return FlightNotFound();
+            var model = await _controllerHelper.Tickets
+                .GetViewModelForInputCreateAsync(flightId.Value, User.Identity.Name);
 
-            var user = await _userHelper.GetUserByEmailAsync(User.Identity.Name);
-            if (user == null) return NotFound();
+            if (model == null) return TicketNotFound();
 
-            var ticket = new Ticket { Flight = flight, User = user };
-
-            return View(ticket);
+            return View(model);
         }
 
         // POST: Tickets/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Ticket ticket, int flightId)
+        public async Task<IActionResult> Create(InputTicketViewModel model)
         {
-            // Get Flight from which Ticket was created.
-            var flight = await _flightRepository.GetByIdAsync(flightId);
-            if (flight == null) return FlightNotFound();
-
             if (ModelState.IsValid)
             {
-                // Check Seat exists in Flight.
-                if (!await _flightRepository.IsSeatInBoundsAsync(flight.Id, ticket.Seat))
+                // Check the model email is the real email of the logged user.
+                if (model.UserEmail != User.Identity.Name)
                 {
-                    ModelState.AddModelError(
-                        string.Empty,
-                        $"This {nameof(Ticket.Seat)} doesn't exist in this {nameof(Flight)}.");
-
-                    ticket.Flight = flight;
-                    return View(ticket);
+                    TempData["LayoutMessage"] = "You must login to your account to buy a ticket.";
+                    return RedirectToAction(nameof(AccountController.Logout), "Account");
                 }
 
-                // Check Seat is available.
-                if (await _ticketRepository.IsSeatTakenAsync(flight.Id, ticket.Seat, 0))
-                {
-                    ModelState.AddModelError(
-                        string.Empty, $"This {nameof(Ticket.Seat)} is not available.");
+                // Check ticket is valid.
+                var checkTicketMessage = await _controllerHelper.Tickets.CheckTicketAsync(model, "create");
 
-                    ticket.Flight = flight;
-                    return View(ticket);
+                if (checkTicketMessage != string.Empty)
+                {
+                    ModelState.AddModelError(string.Empty, checkTicketMessage);
+                    return View(model);
                 }
 
-                var user = await _userHelper.GetUserByEmailAsync(User.Identity.Name);
-                if (user == null) return NotFound();
-
-                await _ticketRepository.CreateAsync(ticket, flight, user);
+                try
+                {
+                    var ticketId = await _controllerHelper.Tickets.CreateTicketAsync(model);
 
                 // Success.
-                return RedirectToAction(nameof(Details), new { id = ticket.Id });
+                    return RedirectToAction(nameof(Details), new { id = ticketId });
+            }
+                catch (Exception ex)
+                {
+                    if (ex.InnerException.Message.Contains("Cannot insert duplicate key"))
+                    {
+                        ModelState.AddModelError(string.Empty, "This seat is unavailable.");
+                        return View(model);
+                    }
+                }
             }
 
-            ticket.Flight = flight;
             ModelState.AddModelError(string.Empty, $"Could not create {nameof(Ticket)}.");
-            return View(ticket);
+            return View(model);
         }
 
 
@@ -125,39 +112,59 @@ namespace FlairTickets.Web.Controllers
         {
             if (id == null) return TicketNotFound();
 
-            var ticket = await _ticketRepository.GetByIdWithFlightDetailsAsync(id.Value);
-            if (ticket == null) return TicketNotFound();
+            var model = await _controllerHelper.Tickets
+                .GetViewModelForInputEditAsync(id.Value, User.Identity.Name);
 
-            return View(ticket);
+            if (model == null) return TicketNotFound();
+
+            return View(model);
         }
 
         // POST: Tickets/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Ticket ticket)
+        public async Task<IActionResult> Edit(InputTicketViewModel model)
         {
             if (ModelState.IsValid)
             {
+                // Check the model email is the real email of the logged user.
+                if (model.UserEmail != User.Identity.Name)
+                {
+                    TempData["LayoutMessage"] = "You must login to your account to change your seat.";
+                    return RedirectToAction(nameof(AccountController.Logout), "Account");
+                }
+
+                // Check ticket is valid.
+                var checkTicketMessage = await _controllerHelper.Tickets.CheckTicketAsync(model, "update");
+
+                if (checkTicketMessage != string.Empty)
+                {
+                    ModelState.AddModelError(string.Empty, checkTicketMessage);
+                    return View(model);
+                }
+
                 try
                 {
-                    await _ticketRepository.UpdateAsync(ticket);
+                    var ticketId = await _controllerHelper.Tickets.UpdateTicketAsync(model);
+                    return RedirectToAction(nameof(Details), new { id = ticketId });
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!await _ticketRepository.ExistsAsync(ticket.Id))
-                    {
+                    if (!await _controllerHelper.Tickets.TicketExistsAsync(model.Id))
                         return TicketNotFound();
                     }
-                    else
+                catch (Exception ex)
                     {
-                        throw;
+                    if (ex.InnerException.Message.Contains("Cannot insert duplicate key"))
+                    {
+                        ModelState.AddModelError(string.Empty, "This seat is unavailable.");
+                        return View(model);
                     }
                 }
-                return RedirectToAction(nameof(Index));
             }
 
             ModelState.AddModelError(string.Empty, $"Could not create {nameof(Ticket)}.");
-            return View(ticket);
+            return View(model);
         }
 
 
@@ -166,10 +173,10 @@ namespace FlairTickets.Web.Controllers
         {
             if (id == null) return TicketNotFound();
 
-            var ticket = await _ticketRepository.GetByIdWithFlightDetailsAsync(id.Value);
-            if (ticket == null) return TicketNotFound();
+            var model = await _controllerHelper.Tickets.GetViewModelForDisplayAsync(id.Value);
+            if (model == null) return TicketNotFound();
 
-            return View(ticket);
+            return View(model);
         }
 
         // POST: Tickets/Delete/5
@@ -177,7 +184,7 @@ namespace FlairTickets.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            await _ticketRepository.DeleteAsync(id);
+            await _controllerHelper.Tickets.DeleteTicketAsync(id);
             return RedirectToAction(nameof(Index));
         }
 
@@ -213,10 +220,10 @@ namespace FlairTickets.Web.Controllers
                 if (ticketId < 0)
                     return Json("Invalid ticket.");
 
-                if (!await _flightRepository.IsSeatInBoundsAsync(flightId, seat))
+                if (!await _controllerHelper.Tickets.IsSeatInBoundsAsync(flightId, seat))
                     return Json("This seat doesn't exist in this flight.");
 
-                if (await _ticketRepository.IsSeatTakenAsync(flightId, seat, ticketId))
+                if (await _controllerHelper.Tickets.IsSeatTakenAsync(flightId, seat, ticketId))
                     return Json(false);
 
                 return Json(true);

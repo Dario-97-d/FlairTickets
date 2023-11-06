@@ -5,11 +5,12 @@ namespace FlairTickets.Web.Data.Repository.Interfaces
 {
     public interface IGenericRepository<T> where T : class, IEntity
     {
-        Task CreateAsync(T entity);
+        Task<T> CreateAsync(T entity);
         Task DeleteAsync(int id);
         Task<bool> ExistsAsync(int id);
         IQueryable<T> GetAll();
         Task<T> GetByIdAsync(int id);
-        Task UpdateAsync(T entity);
+        Task<T> UpdateAsync(T entity);
+        IQueryable<T> WhereIdEquals(int id);
     }
 }

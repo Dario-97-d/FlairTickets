@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using FlairTickets.Web.Data.Entities;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
@@ -6,6 +7,7 @@ namespace FlairTickets.Web.Data.Repository.Interfaces
 {
     public interface IAirportRepository : IGenericRepository<Airport>
     {
-        IEnumerable<SelectListItem> GetComboAirports();
+        Task<IEnumerable<SelectListItem>> GetComboAirportsIataCodeAsync();
+        Task<int> GetIdFromIataCodeAsync(string iataCode);
     }
 }

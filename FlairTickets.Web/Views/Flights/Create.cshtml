@@ -1,12 +1,12 @@
-﻿@model FlairTickets.Web.Models.Entities.FlightViewModel
+﻿@model FlairTickets.Web.Models.Flight.InputFlightViewModel
 
 @{
     ViewData["Title"] = "Create";
 }
 
-<h1>Create</h1>
+<h1><partial name="_GoBackFAIcon" /> Create</h1>
 
-<h4>Flight</h4>
+<h4><i class="fa fa-plane"></i> Flight</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -14,10 +14,6 @@
             <partial name="_Input" />
         </form>
     </div>
-</div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
 </div>
 
 @section Scripts {

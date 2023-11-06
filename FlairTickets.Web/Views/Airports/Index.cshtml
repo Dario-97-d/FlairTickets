@@ -1,19 +1,20 @@
 ﻿@model IEnumerable<FlairTickets.Web.Data.Entities.Airport>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Airports";
 }
 
-<h1>Index</h1>
+<h1>@ViewData["Title"]</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create" class="btn btn-primary"><i class="fa fa-square-plus"></i> Create New</a>
 </p>
 <table class="table">
     <thead>
         <tr>
+            <th><!--icon--></th>
             <th>
-                @Html.DisplayNameFor(model => model.IataCode)
+                IATA
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Name)
@@ -30,6 +31,7 @@
     <tbody>
 @foreach (var item in Model) {
         <tr>
+            <td><i class="fa fa-location-dot"></i></td>
             <td>
                 @Html.DisplayFor(modelItem => item.IataCode)
             </td>
@@ -43,9 +45,8 @@
                 @Html.DisplayFor(modelItem => item.Country)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary"><i class="fa fa-edit"></i> Edit</a>
+                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger"><i class="fa fa-trash"></i> Delete</a>
             </td>
         </tr>
 }

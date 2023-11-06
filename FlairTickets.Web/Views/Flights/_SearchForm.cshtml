@@ -1,0 +1,83 @@
+﻿@model FlairTickets.Web.Models.Flight.SearchFlightViewModel
+
+<div id="SearchForm">
+    <form asp-controller="Flights" asp-action="Search" id="SearchForm" method="GET">
+        <div class="row" style="margin: 8px; border: 2px solid gray; border-radius: 2px; padding: 12px; background-color: rgba(127, 255, 127, 0.1);">
+    
+            <div class="col-md-3">
+
+                <div class="form-group">
+                    <label asp-for="FlightNumber" class="control-label">Flight number</label>
+                    <input asp-for="FlightNumber" type="number" name="FlightNumber" class="form-control" />
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Airline" class="control-label">Airline</label>
+                    <input asp-for="Airline" name="Airline" list="airlines" class="form-control" disabled/>
+                    <datalist id="airlines">
+                        @if (ViewBag.ComboAirlines != null)
+                            foreach (var airline in ViewBag.ComboAirlines)
+                            {
+                                <option value="@airline.Value">@airline.Text</option>
+                            }
+                    </datalist>
+                </div>
+
+            </div>
+            <div class="col-md-3">
+
+                <div class="form-group">
+                    <label asp-for="Origin" class="control-label">Origin</label>
+                    <input asp-for="Origin" name="Origin" list="Airports" class="form-control" />
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Destination" class="control-label">Destination</label>
+                    <input asp-for="Destination" name="Destination" list="Airports" class="form-control" />
+                </div>
+
+                <!-- datalist for both Origin and Destination airports -->
+                <datalist id="Airports">
+                    @if (ViewBag.ComboAirports != null)
+                        foreach (var airport in ViewBag.ComboAirports)
+                        {
+                            <option value="@airport.Value">@airport.Text</option>
+                        }
+                </datalist>
+
+            </div>
+            <div class="col-md-3">
+
+                <div class="form-group">
+                    <label asp-for="DateMin" class="control-label">Min. Date</label>
+                    <input asp-for="DateMin" type="date" name="DateMin" class="form-control" />
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="DateMax" class="control-label">Max. Date</label>
+                    <input asp-for="DateMax" type="date" name="DateMax" class="form-control" />
+                </div>
+
+            </div>
+            <div class="col-md-3">
+
+                <div class="form-group">
+                    <label asp-for="TimeMin" class="control-label">Min. Hour</label>
+                    <input asp-for="TimeMin" type="time" name="TimeMin" class="form-control" />
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="TimeMax" class="control-label">Max. Hour</label>
+                    <input asp-for="TimeMax" type="time" name="TimeMax" class="form-control" />
+                </div>
+            
+            </div>
+
+            <div class="form-group" style="margin: auto">
+                <span onclick="$(this).closest('form').find('input').val('');" class="btn btn-light border"><i class="fa fa-eraser"></i> Clear all</span>
+                <button class="btn btn-primary"><i class="fa fa-search"></i> See flights</button>
+            </div>
+
+        </div>
+    </form>
+</div>

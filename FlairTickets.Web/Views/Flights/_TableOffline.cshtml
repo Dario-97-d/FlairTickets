@@ -1,21 +1,24 @@
-﻿@model FlairTickets.Web.Models.Flight.IndexFlightViewModel
+﻿@model IEnumerable<FlairTickets.Web.Models.Flight.IndexRowFlightViewModel>
 
 <table class="table">
     <thead>
         <tr>
-            <th>Date</th>
-            <th>Time</th>
-            <th><!--CompanyLogo--></th>
-            <th>Flight</th>
-            <th>Origin</th>
-            <th>Destination</th>
-            <th>Av.</th>
+            <th><!--icon--></th>
+            <th><i class="fa fa-calendar-days"></i> Date</th>
+            <th><i class="fa fa-clock"></i> Time</th>
+            <th><i class="fa fa-circle-info"></i> Flight</th>
+            <th><i class="fa fa-plane-departure"></i> Origin</th>
+            <th><i class="fa fa-plane-arrival"></i> Destination</th>
+            <th><!--Options--></th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model.Flights)
+        @foreach (var item in Model)
         {
             <tr>
+                <td>
+                    <i class="fa fa-plane"></i>
+                </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Date)
                 </td>
@@ -23,10 +26,7 @@
                     @Html.DisplayFor(modelItem => item.Time)
                 </td>
                 <td>
-                    <img src="none@*@Html.DisplayFor(modelItem => item.ImageFullPath)*@" style="max-width:32px;max-height:32px;">
-                </td>
-                <td>
-                    <a href="/Flights/Details/@item.FlightId">@Html.DisplayFor(modelItem => item.FlightNumber)</a>
+                    @Html.DisplayFor(modelItem => item.FlightNumber)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Origin)
@@ -35,7 +35,7 @@
                     @Html.DisplayFor(modelItem => item.Destination)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.AvailableSeats)
+                    <a href="/Flights/Details/@item.FlightId" class="btn btn-info">See flight</a>
                 </td>
             </tr>
         }

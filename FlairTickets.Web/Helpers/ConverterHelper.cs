@@ -1,24 +1,32 @@
-﻿using System.Threading.Tasks;
-using FlairTickets.Web.Data.Entities;
-using FlairTickets.Web.Data.Repository.Interfaces;
+﻿using FlairTickets.Web.Data.Entities;
 using FlairTickets.Web.Helpers.Interfaces;
-using FlairTickets.Web.Models.Entities;
+using FlairTickets.Web.Models.Flight;
+using FlairTickets.Web.Models.Ticket;
 
 namespace FlairTickets.Web.Helpers
 {
     public class ConverterHelper : IConverterHelper
     {
-        private readonly IAirplaneRepository _airplaneRepository;
-        private readonly IAirportRepository _airportRepository;
-
-        public ConverterHelper(
-            IAirplaneRepository airplaneRepository,
-            IAirportRepository airportRepository)
+        public DisplayFlightViewModel FlightToDisplayFlightViewModel(Flight flight)
         {
-            _airplaneRepository = airplaneRepository;
-            _airportRepository = airportRepository;
+            return new DisplayFlightViewModel
+            {
+                Id = flight.Id,
+                Number = flight.Number,
+                DateTime = string.Format("{0:d} {0:HH:mm}", flight.DateTime),
+            };
         }
-
+        
+        public InputFlightViewModel FlightToInputFlightViewModel(Flight flight)
+        {
+            return new InputFlightViewModel
+            {
+                Id = flight.Id,
+                Number = flight.Number,
+                DateTime = flight.DateTime,
+                AirplaneId = flight.AirplaneId,
+            };
+        }
 
         public FlightViewModel FlightToViewModel(Flight flight)
         {
@@ -26,22 +34,74 @@ namespace FlairTickets.Web.Helpers
             {
                 Number = flight.Number,
                 DateTime = flight.DateTime,
-                OriginAirportId = flight.Origin?.Id ?? 0,
-                DestinationAirportId = flight.Destination?.Id ?? 0,
-                AirplaneId = flight.Airplane?.Id ?? 0,
+                OriginAirportId = flight.OriginAirportId,
+                DestinationAirportId = flight.DestinationAirportId,
+                AirplaneId = flight.AirplaneId,
             };
         }
 
-        public async Task<Flight> ViewModelToFlightAsync(FlightViewModel model)
+        public DisplayTicketViewModel TicketToDisplayTicketViewModel(Ticket ticket)
+        {
+            return new DisplayTicketViewModel
+            {
+                Id = ticket.Id,
+                FlightId = ticket.FlightId,
+                Seat = ticket.Seat,
+            };
+        }
+
+        public Flight ViewModelFlightInputToFlight(InputFlightViewModel model)
         {
             return new Flight
             {
                 Id = model.Id,
                 Number = model.Number,
                 DateTime = model.DateTime,
-                Origin = await _airportRepository.GetByIdAsync(model.OriginAirportId),
-                Destination = await _airportRepository.GetByIdAsync(model.DestinationAirportId),
-                Airplane = await _airplaneRepository.GetByIdAsync(model.AirplaneId)
+                AirplaneId = model.AirplaneId,
+            };
+        }
+
+        public Flight ViewModelFlightInputToFlight(InputFlightViewModel model, Flight flight)
+        {
+            flight.Id = model.Id;
+            flight.Number = model.Number;
+            flight.DateTime = model.DateTime;
+            flight.AirplaneId = model.AirplaneId;
+
+            return flight;
+        }
+
+        public Ticket ViewModelTicketInputToTicket(InputTicketViewModel model)
+        {
+            return new Ticket
+            {
+                Id = model.Id,
+                Seat = model.Seat,
+            };
+        }
+
+        public Ticket ViewModelTicketInputToTicket
+            (InputTicketViewModel model, string userId, int flightId)
+        {
+            return new Ticket
+            {
+                Id = model.Id,
+                UserId = userId,
+                FlightId = flightId,
+                Seat = model.Seat,
+            };
+        }
+
+        public Flight ViewModelToFlight(FlightViewModel model)
+        {
+            return new Flight
+            {
+                Id = model.Id,
+                Number = model.Number,
+                DateTime = model.DateTime,
+                OriginAirportId = model.OriginAirportId,
+                DestinationAirportId = model.DestinationAirportId,
+                AirplaneId = model.AirplaneId,
             };
         }
     }

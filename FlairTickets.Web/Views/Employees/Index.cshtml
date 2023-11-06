@@ -6,34 +6,26 @@
 <h1>@ViewData["Title"]</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create" class="btn btn-primary"><i class="fa fa-user-plus"></i> Create New</a>
 </p>
 <p class="text-warning">@TempData["Message"]</p>
 <table class="table">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.ChosenName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FullName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Email)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.PhoneNumber)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.EmailConfirmed)
-            </th>
-            <th></th>
+            <th><!--icon--></th>
+            <th>Chosen name</th>
+            <th>Full name</th>
+            <th>Email</th>
+            <th>Phone number</th>
+            <th>Email confirmed?</th>
+            <th><!--options--></th>
         </tr>
     </thead>
     <tbody>
         @foreach (var item in Model)
         {
             <tr>
+                <td><i class="fa fa-user"></i></td>
                 <td>
                     @Html.DisplayFor(modelItem => item.ChosenName)
                 </td>
@@ -47,12 +39,12 @@
                     @Html.DisplayFor(modelItem => item.PhoneNumber)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.EmailConfirmed)
+                    <i class="fa @(item.EmailConfirmed ? "fa-user-check" : "fa-user-xmark")"></i>
                 </td>
                 <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-success"><i class="fa fa-address-card"></i></a>
+                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary"><i class="fa fa-user-pen"></i></a>
+                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger"><i class="fa fa-user-minus"></i></a>
                 </td>
             </tr>
         }

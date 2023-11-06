@@ -1,18 +1,18 @@
-﻿@model FlairTickets.Web.Data.Entities.Ticket
+﻿@model FlairTickets.Web.Models.Ticket.DisplayTicketViewModel
 
 @{
-    ViewData["Title"] = "Delete";
+    ViewData["Title"] = "Cancel ticket";
 }
 
-<h1>Delete</h1>
-
-<h3>Are you sure you want to delete this Ticket?</h3>
+<h2><partial name="_GoBackFAIcon" /> @ViewData["Title"]</h2>
+<p>Are you sure you want to cancel this Ticket?</p>
 <div>
     <partial name="_Display" />
     
     <form asp-action="Delete">
-        <input type="hidden" asp-for="Id" />
-        <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Index">Back to List</a>
+        <input asp-for="Id" hidden />
+        <div class="form-group">
+            <button type="submit" class="btn btn-danger"><i class="fa fa-square-xmark"></i> Confirm</button>
+        </div>
     </form>
 </div>

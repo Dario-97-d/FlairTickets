@@ -17,6 +17,7 @@ namespace FlairTickets.Web.Helpers.Interfaces
         Task<IEnumerable<User>> GetAllInRoleAsync(string role);
         Task<User> GetUserByEmailAsync(string email);
         Task<User> GetUserByIdAsync(string id);
+        Task<string> GetUserChosenNameAsync(string id);
         Task<bool> IsUserInRoleAsync(User user, string role);
         Task<SignInResult> LoginAsync(User user, string password, bool rememberMe);
         Task LogoutAsync();

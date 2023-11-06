@@ -1,10 +1,14 @@
-﻿@model FlairTickets.Web.Data.Entities.Ticket
+﻿@model FlairTickets.Web.Models.Ticket.InputTicketViewModel
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Change seat";
 }
 
+<h1><partial name="_GoBackFAIcon" /> @ViewData["Title"]</h1>
+
+<form asp-action="Edit">
 <partial name="_Input" view-data="ViewData" />
+</form>
 
 @section Scripts{
     @{
