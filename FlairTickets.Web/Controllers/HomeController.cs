@@ -28,6 +28,11 @@ namespace FlairTickets.Web.Controllers
             return View();
         }
 
+        public IActionResult AccessDenied()
+        {
+            return View();
+        }
+
         [Route("/Error/404")]
         public IActionResult NotFound()
         {

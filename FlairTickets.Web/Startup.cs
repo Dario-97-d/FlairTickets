@@ -55,6 +55,11 @@ namespace FlairTickets.Web
             services.AddScoped<ITicketRepository, TicketRepository>();
 
             services.AddControllersWithViews();
+
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.AccessDeniedPath = "/Home/AccessDenied";
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
