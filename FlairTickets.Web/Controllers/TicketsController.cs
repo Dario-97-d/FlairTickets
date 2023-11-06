@@ -4,6 +4,7 @@ using FlairTickets.Web.Data.Repository.Interfaces;
 using FlairTickets.Web.Helpers.Interfaces;
 using FlairTickets.Web.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
