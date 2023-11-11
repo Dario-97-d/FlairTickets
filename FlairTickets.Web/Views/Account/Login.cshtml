@@ -1,32 +1,42 @@
 ﻿@model FlairTickets.Web.Models.Account.LoginViewModel
+
 @{
     ViewData["Title"] = "Login";
 }
 
-<h2>Login</h2>
-
 <div class="row">
     <div class="col-md-4 offset-md-4">
+        
+        <h2>@ViewData["Title"]</h2>
+        <hr />
+        
         <form method="POST">
             
-            <p class="text-success">@TempData["Message"]</p>
+            @* Message to User. *@
+            @if (TempData["Message"] != null)
+            {
+                <!-- Message to User -->
+                <p class="text-success">@TempData["Message"]</p>
+            }
             
+            @* ModelState Errors. *@
             <div asp-validation-summary="ModelOnly"></div>
 
             <!-- Email -->
             <div class="form-group">
-                <label asp-for="Email">Email</label>
+                <label asp-for="Email"><i class="fa fa-at"></i> Email</label>
                 <input asp-for="Email" class="form-control" />
                 <span asp-validation-for="Email" class="text-danger"></span>
             </div>
 
             <!-- Password -->
             <div class="form-group">
-                <label asp-for="Password">Password</label>
+                <label asp-for="Password"><i class="fa fa-key"></i> Password</label>
                 <input asp-for="Password" type="password" class="form-control" />
                 <span asp-validation-for="Password" class="text-danger"></span>
             </div>
 
+            @* Remember me and Forgot password *@
             <div class="form-group">
                 
                 <!-- Remember me? -->
@@ -47,6 +57,7 @@
                 <a asp-action="Register" asp-route-ReturnUrl="@Context.Request.Query["ReturnUrl"]" class="btn btn-primary">Sign up</a>
             </div>
         </form>
+
     </div>
 </div>
 

@@ -1,14 +1,19 @@
 ﻿@model FlairTickets.Web.Models.Account.UpdateUserViewModel
+
 @{
     ViewData["Title"] = "Account details";
 }
 
-<h2>Account details</h2>
-
 <div class="row">
     <div class="col-md-6 offset-md-3">
+        
+        <h2><i class="fa fa-clipboard-user"></i> @ViewData["Title"]</h2>
+        <a asp-action="ChangePassword"><i class="fa fa-key"></i> Change password</a>
+        <hr />
+
         <form method="POST">
 
+            @* ModelState Errors. *@
             <div asp-validation-summary="ModelOnly"></div>
 
             <!-- Chosen Name -->
@@ -48,10 +53,11 @@
 
             <p class="text-success">@ViewBag.UserMessage</p>
 
-            <!-- Update __ Change password -->
+            <hr />
+
+            <!-- Update account -->
             <div class="form-group">
-                <input type="submit" asp-action="UpdateUser" value="Update" class="btn btn-primary" />
-                <a asp-action="ChangePassword" class="btn btn-success">Change password</a>
+                <a asp-action="UpdateUser" class="btn btn-primary"><i class="fa fa-check"></i> Update account</a>
             </div>
 
         </form>

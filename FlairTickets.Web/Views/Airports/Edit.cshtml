@@ -1,47 +1,60 @@
 ﻿@model FlairTickets.Web.Data.Entities.Airport
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Edit Airport";
 }
 
-<h1>Edit</h1>
+<h2><partial name="_GoBackFAIcon" /> Edit</h2>
 
-<h4>Airport</h4>
+<h4><i class="fa fa-location-dot"></i> Airport</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Edit">
+
+            @* ModelState Errors. *@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            @* Airport's Id *@
             <input type="hidden" asp-for="Id" />
+
+            <!-- IATA Code -->
             <div class="form-group">
                 <label asp-for="IataCode" class="control-label"></label>
                 <input asp-for="IataCode" class="form-control" />
                 <span asp-validation-for="IataCode" class="text-danger"></span>
             </div>
+
+            <!-- Airport Name -->
             <div class="form-group">
                 <label asp-for="Name" class="control-label"></label>
                 <input asp-for="Name" class="form-control" />
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
+
+            <!-- City -->
             <div class="form-group">
                 <label asp-for="City" class="control-label"></label>
                 <input asp-for="City" class="form-control" />
                 <span asp-validation-for="City" class="text-danger"></span>
             </div>
+
+            <!-- Country -->
             <div class="form-group">
                 <label asp-for="Country" class="control-label"></label>
                 <input asp-for="Country" class="form-control" />
                 <span asp-validation-for="Country" class="text-danger"></span>
             </div>
+
+            <hr />
+
+            <!-- Save -->
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+                <button class="btn btn-primary"><i class="fa fa-save"></i> Save</button>
             </div>
+
         </form>
     </div>
-</div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
 </div>
 
 @section Scripts {

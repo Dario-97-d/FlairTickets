@@ -7,12 +7,17 @@
     <link rel="stylesheet" href="~/lib/font-awesome/css/all.min.css" />
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
+    <style>
+        /* Hides vertical scrollbar. */
+        body::-webkit-scrollbar { display: none; }
+    </style>
 </head>
 <body>
+
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">FlairTickets.Web</a>
+                <a class="navbar-brand" asp-controller="Home" asp-action="Index">FlairTickets.Web</a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -24,40 +29,40 @@
                             @if (User.IsInRole("Admin"))
                             {
                                 <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Airplanes" asp-action="Index">Airplanes</a>
+                                    <a class="nav-link text-dark" asp-controller="Airplanes" asp-action="Index"><i class="fa fa-plane-up"></i> Airplanes</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Airports" asp-action="Index">Airports</a>
+                                    <a class="nav-link text-dark" asp-controller="Airports" asp-action="Index"><i class="fa fa-location-dot"></i> Airports</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Employees" asp-action="Index">Employees</a>
+                                    <a class="nav-link text-dark" asp-controller="Employees" asp-action="Index"><i class="fa fa-user"></i> Employees</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Flights" asp-action="Index">Flights</a>
+                                    <a class="nav-link text-dark" asp-controller="Flights" asp-action="Index"><i class="fa fa-plane"></i> Flights</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Tickets" asp-action="Index">Tickets</a>
+                                    <a class="nav-link text-dark" asp-controller="Tickets" asp-action="Index"><i class="fa fa-ticket"></i> Tickets</a>
                                 </li>
                             }
                             else if (User.IsInRole("Employee"))
                             {
                                 <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Flights" asp-action="Index">Flights</a>
+                                    <a class="nav-link text-dark" asp-controller="Flights" asp-action="Index"><i class="fa fa-plane"></i> Flights</a>
                                 </li>
                             }
                             else
                             {
                                 <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Tickets" asp-action="Index">My Tickets</a>
+                                    <a class="nav-link text-dark" asp-controller="Tickets" asp-action="Index"><i class="fa fa-ticket"></i> My Tickets</a>
                                 </li>
                             }
                         </ul>
                         <ul class="navbar-nav navbar-right">
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Index">@this.User.Identity.Name</a>
+                                <a class="nav-link text-dark" asp-controller="Account" asp-action="Index">@this.User.Identity.Name</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Logout">Logout</a>
+                                <a class="nav-link text-dark" asp-controller="Account" asp-action="Logout"><i class="fa fa-right-from-bracket"></i></a>
                             </li>
                         </ul>
                     }
@@ -67,10 +72,10 @@
                         </ul>
                         <ul class="navbar-nav navbar-right">
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Login">Login</a>
+                                <a class="nav-link text-dark" asp-controller="Account" asp-action="Register">Sign up</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Register">Sign up</a>
+                                <a class="nav-link text-dark" asp-controller="Account" asp-action="Login"><i class="fa fa-right-to-bracket"></i></a>
                             </li>
                         </ul>
                     }
@@ -78,6 +83,7 @@
             </div>
         </nav>
     </header>
+
     <div class="container">
         <main role="main" class="pb-3">
             <p>@TempData["LayoutMessage"]</p>
@@ -87,9 +93,10 @@
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2023 - FlairTickets.Web - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            &copy; 2023 - FlairTickets.Web - <a asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>

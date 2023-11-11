@@ -1,7 +1,7 @@
 ﻿@model FlairTickets.Web.Models.Flight.DisplayFlightViewModel
 
 @{
-    ViewData["Title"] = $"Flight {Model.Number}";
+    ViewData["Title"] = $"View Flight";
 }
 
 <h2><partial name="_GoBackFAIcon" /> @ViewData["Title"]</h2>
@@ -9,8 +9,10 @@
 <div>
     @if (User.Identity.IsAuthenticated)
     {
+        @* Buy Ticket *@
         if (User.IsInRole("Customer"))
         {
+            <!-- Buy Ticket -->
             <h4><a asp-controller="Tickets" asp-action="Create" asp-route-flightId="@Model.Id">Buy Ticket</a></h4>
         }
     }
@@ -18,12 +20,14 @@
     {
         <p>In order to buy a Ticket, you need to Login or Sign up.</p>
     }
+
     <hr />
     <partial name="_Display" />
 </div>
 <div>
     @if (User.Identity.IsAuthenticated && User.IsInRole("Employee"))
     {
+        <hr />
         <div class="form-group">
             <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary"><i class="fa fa-edit"></i> Edit</a>
             <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger"><i class="fa fa-trash"></i> Delete</a>

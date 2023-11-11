@@ -1,11 +1,16 @@
 ﻿@model FlairTickets.Web.Models.Flight.InputFlightViewModel
 
+@* ModelState Errors. *@
 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+<!-- Flight Number -->
 <div class="form-group">
     <label class="control-label"><i class="fa fa-circle-info"></i> Flight number</label>
     <input asp-for="Number" type="number" class="form-control" placeholder="Flight number" />
     <span asp-validation-for="Number" class="text-danger"></span>
 </div>
+
+<!-- Date and hour -->
 <div class="form-group">
     <label class="control-label"><i class="fa fa-calendar-days"></i> Date and hour</label>
     @if (ViewData["Title"].ToString() == "Create")
@@ -18,24 +23,36 @@
     }
     <span asp-validation-for="DateTime" class="text-danger"></span>
 </div>
+
+<!-- Origin Airport -->
 <div class="form-group">
     <label class="control-label"><i class="fa fa-plane-departure"></i> Origin airport</label>
     <input asp-for="OriginAirportIataCode" class="form-control" list="Airports" placeholder="Select an Airport" />
     <span asp-validation-for="OriginAirportIataCode" class="text-danger"></span>
 </div>
+
+<!-- Destination Airport -->
 <div class="form-group">
     <label class="control-label"><i class="fa fa-plane-arrival"></i> Destination airport</label>
     <input asp-for="DestinationAirportIataCode" class="form-control" list="Airports" placeholder="Select an Airport" />
     <span asp-validation-for="DestinationAirportIataCode" class="text-danger"></span>
 </div>
+
+<!-- Airplane -->
 <div class="form-group">
     <label class="control-label"><i class="fa fa-plane-up"></i> Airplane id</label>
     <input asp-for="AirplaneId" type="text" value="@((Model?.AirplaneId ?? 0) == 0 ? "" : Model.AirplaneId)" class="form-control" list="Airplanes" placeholder="Select an Airplane" />
     <span asp-validation-for="AirplaneId" class="text-danger"></span>
 </div>
+
+<hr />
+
+<!-- Save -->
 <div class="form-group">
     <button class="btn btn-primary"><i class="fa fa-save"></i> Save</button>
 </div>
+
+<!-- Datalist for Airports -->
 <datalist id="Airports">
     @if (ViewBag.ComboAirports != null)
         foreach (var airport in ViewBag.ComboAirports)
@@ -43,6 +60,8 @@
             <option value="@airport.Value">@airport.Text</option>
         }
 </datalist>
+
+<!-- Datalist for Airplanes -->
 <datalist id="Airplanes">
     @if (ViewBag.ComboAirplanes != null)
         foreach (var airport in ViewBag.ComboAirplanes)

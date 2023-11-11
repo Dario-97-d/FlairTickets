@@ -7,12 +7,12 @@
 <h1>@ViewData["Title"]</h1>
 
 <p>
-    <a asp-action="Create" class="btn btn-primary"><i class="fa fa-square-plus"></i> Create New</a>
+    <a asp-action="Create" class="btn btn-primary"><i class="fa fa-square-plus"></i> New Airport</a>
 </p>
 <table class="table">
     <thead>
         <tr>
-            <th><!--icon--></th>
+            <th><!-- icon --></th>
             <th>
                 IATA
             </th>
@@ -25,7 +25,7 @@
             <th>
                 @Html.DisplayNameFor(model => model.Country)
             </th>
-            <th></th>
+            <th><!-- actions --></th>
         </tr>
     </thead>
     <tbody>

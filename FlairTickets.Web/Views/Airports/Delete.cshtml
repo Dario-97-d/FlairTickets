@@ -1,14 +1,14 @@
 ﻿@model FlairTickets.Web.Data.Entities.Airport
 
 @{
-    ViewData["Title"] = "Delete";
+    ViewData["Title"] = "Delete Airport";
 }
 
-<h1>Delete</h1>
+<h2><partial name="_GoBackFAIcon" /> @ViewData["Title"]</h2>
 
-<h3>Are you sure you want to delete this?</h3>
+<h4><i class="fa fa-location-dot"></i> @Model.ComboName</h4>
+
 <div>
-    <h4>Airport</h4>
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">
@@ -37,9 +37,10 @@
         </dd>
     </dl>
     
+    <hr />
+    <p>Are you sure you want to delete this Airport?</p>
+
     <form asp-action="Delete">
-        <input type="hidden" asp-for="Id" />
-        <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Index">Back to List</a>
+        <button class="btn btn-danger" value="@Model.Id">Delete Airport</button>
     </form>
 </div>

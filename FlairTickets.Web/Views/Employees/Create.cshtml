@@ -1,21 +1,25 @@
 ﻿@model FlairTickets.Web.Models.Account.CreateEmployeeViewModel
+
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Add Employee";
 }
 
-<h1>@ViewData["Title"]</h1>
+<h2><partial name="_GoBackFAIcon" /> Add</h2>
 
-<h4>Employee</h4>
+<h4><i class="fa fa-user-plus"></i> Employee</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Create">
 
+            @* Message to User. *@
             @if (ViewBag.Message != null)
             {
-            <p class="text-success">@Html.Raw(ViewBag.Message)</p>
+                <!-- Message to User -->
+                <p class="text-success">@Html.Raw(ViewBag.Message)</p>
             }
 
+            @* ModelState Errors. *@
             <div asp-validation-summary="ModelOnly"></div>
 
             <!-- Email -->
@@ -60,19 +64,15 @@
                 <span asp-validation-for="Address" class="text-danger"></span>
             </div>
 
-            <p class="text-success">@ViewBag.UserMessage</p>
+            <hr />
 
             <!-- Update -->
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <button class="btn btn-primary"><i class="fa fa-user-plus"></i> Save</button>
             </div>
 
         </form>
     </div>
-</div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
 </div>
 
 @section Scripts {

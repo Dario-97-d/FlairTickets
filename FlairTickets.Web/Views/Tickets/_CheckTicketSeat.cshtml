@@ -1,5 +1,10 @@
 ﻿<script type="text/javascript">
+    
+    // -- Check whether seat is available or not, or there is a message from the response --
+
     $(document).ready(function () {
+
+        // -- Set default element's behaviors --
 
         $('#btnSave').attr('disabled', true);
 
@@ -10,6 +15,7 @@
 
         var timer = 0;
 
+        // Set Seat input event listener.
         $("#Seat").on('input', function () {
 
             $('#btnSave').attr('disabled', true);
@@ -33,6 +39,8 @@
                     dataType: 'JSON',
                     data: { flightId: @Model.FlightDisplay.Id, seat: seat, ticketId: @Model.Id },
                     success: function (response) {
+                        
+                        // If Seat is available.
                         if (response == true) {
                             $('#SeatIsntTaken').text("Seat " + seat + " is available.");
 
@@ -43,6 +51,7 @@
 
                             $('#btnSave').attr('disabled', false);
                         }
+                        // If Seat is taken.
                         else if (response == false) {
                             $('#SeatIsTaken').text("Seat " + seat + " is taken. Choose another seat.");
 
@@ -51,6 +60,7 @@
                             $('#SeatIsntTaken').hide();
                             $('#SeatIsTaken').show();
                         }
+                        // Else.
                         else {
                             $('#CheckingSeatErrorMessage').text(response);
 
@@ -59,6 +69,7 @@
                             $('#SeatIsntTaken').hide();
                             $('#SeatIsTaken').hide();
                         }
+
                     },
                     error: function () {
                         alert("Could not determine whether seat is taken.");

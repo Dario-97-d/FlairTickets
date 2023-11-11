@@ -1,4 +1,5 @@
 ﻿@model IEnumerable<FlairTickets.Web.Data.Entities.User>
+
 @{
     ViewData["Title"] = "Employees";
 }
@@ -6,19 +7,19 @@
 <h1>@ViewData["Title"]</h1>
 
 <p>
-    <a asp-action="Create" class="btn btn-primary"><i class="fa fa-user-plus"></i> Create New</a>
+    <a asp-action="Create" class="btn btn-primary"><i class="fa fa-user-plus"></i> Add Employee</a>
 </p>
 <p class="text-warning">@TempData["Message"]</p>
 <table class="table">
     <thead>
         <tr>
-            <th><!--icon--></th>
+            <th><!-- icon --></th>
             <th>Chosen name</th>
             <th>Full name</th>
             <th>Email</th>
             <th>Phone number</th>
             <th>Email confirmed?</th>
-            <th><!--options--></th>
+            <th><!-- actions --></th>
         </tr>
     </thead>
     <tbody>

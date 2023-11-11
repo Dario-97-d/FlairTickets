@@ -7,19 +7,19 @@
 <h1>@((User.IsInRole("Customer") ? $"My " : string.Empty) + ViewData["Title"])</h1>
 
 <p>
-    <a asp-controller="Home" class="btn btn-link">Search flights</a>
+    <a asp-controller="Home" class="btn btn-info"><i class="fa fa-search"></i> Search flights</a>
 </p>
 <table class="table">
     <thead>
         <tr>
-            <th><!--icon--></th>
+            <th><!-- icon --></th>
             <th><i class="fa fa-calendar-days"></i> Day</th>
             <th><i class="fa fa-clock"></i> Hour</th>
             <th><i class="fa fa-plane-departure"></i> Origin</th>
             <th><i class="fa fa-plane-arrival"></i> Destination</th>
             <th><i class="fa fa-circle-info"></i> Flight</th>
             <th><i class="fa fa-edit"></i> Seat</th>
-            <th><!--Options--></th>
+            <th><!-- actions --></th>
         </tr>
     </thead>
     <tbody>

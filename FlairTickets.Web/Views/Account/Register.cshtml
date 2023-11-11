@@ -1,14 +1,20 @@
 ﻿@model FlairTickets.Web.Models.Account.RegisterViewModel
+
 @{
     ViewData["Title"] = "Register";
 }
 
-<h2>Register</h2>
-
 <form method="POST">
+
+    @* ModelState Errors. *@
     <div asp-validation-summary="ModelOnly"></div>
 
     <div class="row">
+
+        <div class="col-md-6 offset-3">
+            <h2><i class="fa fa-clipboard-check"></i> @ViewData["Title"]</h2>
+            <hr />
+        </div>
 
         <div class="col-md-3 offset-md-3">
 
@@ -76,7 +82,9 @@
     </div>
 
     <center>
-        <!-- Sign up __ Login -->
+        <hr class="col-md-6 offset-3" />
+
+        <!-- Back to Login __ Sign up -->
         <div class="form-group">
             <a asp-action="Login" class="btn btn-success">Back to Login</a>
             <input type="submit" value="Sign up" class="btn btn-primary" />

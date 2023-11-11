@@ -7,12 +7,12 @@
 <h1>@ViewData["Title"]</h1>
 
 <p>
-    <a asp-action="Create" class="btn btn-primary"><i class="fa fa-square-plus"></i> Create New</a>
+    <a asp-action="Create" class="btn btn-primary"><i class="fa fa-square-plus"></i> New Airplane</a>
 </p>
 <table class="table">
     <thead>
         <tr>
-            <th><!--icon--></th>
+            <th><!-- icon --></th>
             <th>
                 @Html.DisplayNameFor(model => model.Model)
             </th>
@@ -22,13 +22,13 @@
             <th>
                 @Html.DisplayNameFor(model => model.Seats)
             </th>
-            <th></th>
+            <th><!-- actions --></th>
         </tr>
     </thead>
     <tbody>
 @foreach (var item in Model) {
         <tr>
-                <td><i class="fa fa-plane-up"></i></td>
+            <td><i class="fa fa-plane-up"></i></td>
             <td>
                 @Html.DisplayFor(modelItem => item.Model)
             </td>

@@ -5,7 +5,16 @@
 }
 
 <h1>@ViewData["Title"]</h1>
-<div>
+
+@* Buttons New Flight (for Employee) and Search (toggle) *@
+<div class="mb-3">
+
+    @* Button Create for Employee *@
+    @if (ViewBag.Role == "Employee")
+    {
+        <!-- Button Create. -->
+        <a asp-action="Create" class="btn btn-primary"><i class="fa fa-plane"></i> New Flight</a>
+    }
 
     <!-- Toggle Search button -->
     <button onclick="toggleSearchForm(this)" class="btn btn-light border ml-2">Search <i class="fa fa-toggle-on"></i></button>
@@ -28,17 +37,77 @@
         };
     </script>
 
-    @if (ViewBag.Role == "Employee")
-{
-        <a asp-action="Create" class="btn btn-primary">Create New</a>
-    }
 </div>
 
 <partial name="_SearchForm" for="SearchFlight" />
 
 <partial name="@($"_Table{ViewBag.Role}")" for="Flights" />
+
+<div id="flightModal" class="modal fade">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h4 class="modal-title" id="dialogTitle">Flight</h4>
+                <button class="close" data-dismiss="modal"><i class="fa fa-window-close"></i></button>
+            </div>
+
+            <div class="modal-body">
+                <p id="dialogMessage">Dialog message</p>
+            </div>
+
+            <div class="modal-footer">
+                <button id="btnCancel" data-dismiss="modal" class="btn btn-light">Cancel</button>
+                <a id="btnBuyTicket" class="btn btn-primary" href="#">Buy ticket</a>
+            </div>
+
+        </div>
+    </div>
+</div>
+
 @section Scripts{
     @{
         await Html.RenderPartialAsync("_RemoveUnusedInputsFromSearchUrl");
-}
+    }
+    <script type="text/javascript">
+        // Open modal to show Flight Details.
+        //$(document).ready(function() {
+        //    var flightId;
+
+        //    // jquery
+        //    $("a[id*=btnSeeFlight]").click(function() {
+        //        flightId = $(this).attr("href").split("/").pop();
+        //        let flightDetails = getFlightDetails(flightId);
+        //        setModalDialogMessage(flightDetails);
+        //    });
+
+        //    // onclick
+        //    function seeFlight(flightId) {
+        //        let flightDetails = getFlightDetails(flightId);
+        //        setModalDialogMessage(flightDetails);
+        //    }
+
+        //    $.fn.getFlightDetails(flightId) {
+        //        var result = null;
+        //        $.ajax({
+        //            url: @Url.Action("GetFlightDetailsAsync", "Flights"),
+        //            type: "POST",
+        //            dataType: "JSON",
+        //            data: { flightId = flightId },
+        //            success: function(data) {
+        //                result = data;
+        //                alert(data);
+        //            },
+        //            error: function() {
+        //                alert("Could not get flight details.");
+        //            }
+        //        });
+        //        return result;
+        //    }
+
+        //    function setModalDialogMessage(flightDetails) {
+
+        //    }
+        //});
+    </script>
 }

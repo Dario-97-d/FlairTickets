@@ -4,15 +4,18 @@
     ViewData["Title"] = "Cancel ticket";
 }
 
-<h2><partial name="_GoBackFAIcon" /> @ViewData["Title"]</h2>
-<p>Are you sure you want to cancel this Ticket?</p>
+<h2><partial name="_GoBackFAIcon" /> Cancel Ticket</h2>
+
 <div>
+    <h4>Are you sure you want to cancel this Ticket?</h4>
+    <hr />
+
     <partial name="_Display" />
     
+    <hr />
+
     <form asp-action="Delete">
         <input asp-for="Id" hidden />
-        <div class="form-group">
-            <button type="submit" class="btn btn-danger"><i class="fa fa-square-xmark"></i> Confirm</button>
-        </div>
+        <button type="submit" class="btn btn-danger"><i class="fa fa-square-xmark"></i> Confirm</button>
     </form>
 </div>

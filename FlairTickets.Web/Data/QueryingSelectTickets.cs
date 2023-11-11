@@ -95,7 +95,7 @@ namespace FlairTickets.Web.Data
         {
             return await iQueryableFlight.Select(flight => new InputTicketViewModel
             {
-                Id = flight.Id,
+                Id = 0,
                 UserEmail = userEmail,
                 UserChosenName = userChosenName,
                 FlightDisplay = new DisplayFlightViewModel

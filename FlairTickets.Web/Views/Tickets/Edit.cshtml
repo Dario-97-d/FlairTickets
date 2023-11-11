@@ -4,15 +4,15 @@
     ViewData["Title"] = "Change seat";
 }
 
-<h1><partial name="_GoBackFAIcon" /> @ViewData["Title"]</h1>
-
+<h2><partial name="_GoBackFAIcon" /> @ViewData["Title"]</h2>
+<hr />
 <form asp-action="Edit">
-<partial name="_Input" view-data="ViewData" />
+    <partial name="_Input" view-data="ViewData" />
 </form>
 
 @section Scripts{
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
         await Html.RenderPartialAsync("_CheckTicketSeat");
-                            }
+    }
 }

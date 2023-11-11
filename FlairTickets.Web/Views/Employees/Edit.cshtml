@@ -1,18 +1,28 @@
 ﻿@model FlairTickets.Web.Models.Account.EditEmployeeViewModel
+
 @{
-    ViewData["Title"] = "Edit employee";
+    ViewData["Title"] = "Update Employee";
 }
 
-<h2>@ViewData["Title"]</h2>
+<h2><partial name="_GoBackFAIcon" /> Update</h2>
 
+<h4><i class="fa fa-user-pen"></i> Employee</h4>
+<hr />
 <div class="row">
-    <div class="col-md-6 offset-md-3">
+    <div class="col-md-4">
         <form method="POST">
 
-            <p class="text-success">@ViewBag.Message</p>
+            @* Message to User. *@
+            @if (@ViewBag.Message != null)
+            {
+                <!-- Message to User -->
+                <p class="text-success">@ViewBag.Message</p>
+            }
 
+            @* ModelState Errors. *@
             <div asp-validation-summary="ModelOnly"></div>
 
+            @* Employee's Id *@
             <input type="hidden" asp-for="Id" />
 
             <!-- ChosenName -->
@@ -28,10 +38,11 @@
                 <span asp-validation-for="Email" class="text-danger"></span>
             </div>
 
-            <!-- Update __ Back to Employees -->
+            <hr />
+
+            <!-- Update -->
             <div class="form-group">
-                <input type="submit" value="Edit" class="btn btn-primary" />
-                <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-success">Back to Employee</a>
+                <button class="btn btn-primary"><i class="fa fa-user-pen"></i> Save</button>
             </div>
 
         </form>

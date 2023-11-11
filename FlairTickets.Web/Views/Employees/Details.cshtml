@@ -1,17 +1,19 @@
 ﻿@model FlairTickets.Web.Data.Entities.User
+
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "View Employee";
 }
 
-<h1>@ViewData["Title"]</h1>
+<h2><partial name="_GoBackFAIcon" /> @ViewData["Title"]</h2>
 
+<h4><i class="fa fa-user"></i> @Model.FullName</h4>
+<hr />
 <div>
-    <h4>Employee</h4>
-    <hr />
     <partial name="_Display" />
 </div>
+
+<hr />
 <div class="form-group">
     <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary"><i class="fa fa-edit"></i> Edit</a>
     <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger"><i class="fa fa-trash"></i> Delete</a>
 </div>
-<a asp-action="Index">Back to Flights</a>

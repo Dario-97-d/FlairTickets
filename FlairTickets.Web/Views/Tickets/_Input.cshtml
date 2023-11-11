@@ -4,10 +4,10 @@
 <div class="row">
         
     <div class="col-md-8">
+        <!-- Ticket's Flight -->
         <h4><i class="fa fa-plane"></i> Flight</h4>
         <hr />
 
-        <!-- Ticket's Flight -->
         <partial name="/Views/Flights/_Display.cshtml" for="FlightDisplay" />
         <input asp-for="FlightDisplay.Id" hidden />
         <input asp-for="FlightDisplay.Number" hidden />
@@ -15,19 +15,29 @@
         <input asp-for="FlightDisplay.OriginAirport" hidden />
         <input asp-for="FlightDisplay.DestinationAirport" hidden />
         <input asp-for="FlightDisplay.Airplane" hidden />
+
+        <hr />
     </div>
 
     <div class="col-md-4">
-            
+        
+        @* ModelState Errors. *@
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
         <!-- Customer -->
         <h4><i class="fa fa-user"></i> User</h4>
+        <hr />
+
         <p>@Model.UserChosenName<br />@Model.UserEmail</p>
         <input asp-for="UserChosenName" hidden />
         <input asp-for="UserEmail" hidden />
 
+        <hr />
+
+        <!-- Ticket -->
         <h4><i class="fa fa-edit"></i> Ticket</h4>
+        <hr />
+
         <input asp-for="Id" hidden />
 
         <!-- Ticket's Seat -->
@@ -40,7 +50,9 @@
             <span id="SeatIsntTaken" class="text-success"></span>
             <span id="SeatIsTaken" class="text-danger"></span>
         </div>
-            
+        
+        <hr />
+
         <!-- Submit -->
         <div class="form-group">
             <button id="btnSave" class="btn btn-primary"><i class="fa fa-save"></i> Save</button>
