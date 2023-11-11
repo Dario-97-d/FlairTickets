@@ -27,6 +27,7 @@ namespace FlairTickets.Web.Models.Account
         public string Address { get; set; }
 
         [Display(Name = "Phone number")]
+        [Required]
         public string PhoneNumber { get; set; }
     }
 }

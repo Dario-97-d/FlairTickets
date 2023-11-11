@@ -20,6 +20,11 @@ namespace FlairTickets.Web.Helpers
         }
 
 
+        public async Task<IdentityResult> AddUserAsync(User user)
+        {
+            return await _userManager.CreateAsync(user);
+        }
+
         public async Task<IdentityResult> AddUserAsync(User user, string password)
         {
             return await _userManager.CreateAsync(user, password);

@@ -8,6 +8,7 @@ namespace FlairTickets.Web.Helpers.Interfaces
     public interface IUserHelper
     {
         Task<IdentityResult> AddUserAsync(User user, string password);
+        Task<IdentityResult> AddUserAsync(User user);
         Task AddUserToRoleAsync(User user, string role);
         Task<IdentityResult> ChangePasswordAsync(User user, string oldPassword, string newPassword);
         Task<IdentityResult> ConfirmEmailAsync(User user, string token);

@@ -164,6 +164,28 @@ namespace FlairTickets.Web.Controllers
                         }
                         else return RedirectToHomePage();
                     }
+
+                    // Check why login failed and display message accordingly.
+                    if (login.IsNotAllowed)
+                    {
+                        // -- For employees, email confirmation is made trough password reset.
+                        // Hence, it's better to check for password length before email confirmation,
+                        // for employees to get better feedback on why their login failed. --
+
+                        // Has not password?
+                        if (user.PasswordHash == null)
+                        {
+                            ModelState.AddModelError(string.Empty, "You need to set a password to login.");
+                            return View();
+                        }
+
+                        // Is email confirmation not done?
+                        if (!user.EmailConfirmed)
+                        {
+                            ModelState.AddModelError(string.Empty, "You need to confirm email.");
+                            return View();
+                }
+            }
                 }
             }
 

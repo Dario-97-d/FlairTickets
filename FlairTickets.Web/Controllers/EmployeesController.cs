@@ -79,9 +79,7 @@ namespace FlairTickets.Web.Controllers
                     Address = model.Address,
                 };
 
-                var password = Guid.NewGuid().ToString() + "Upper";
-
-                var addUser = await _userHelper.AddUserAsync(user, password);
+                var addUser = await _userHelper.AddUserAsync(user);
                 if (addUser.Succeeded)
                 {
                     await _userHelper.AddUserToRoleAsync(user, "Employee");
