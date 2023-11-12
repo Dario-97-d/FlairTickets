@@ -6,6 +6,7 @@ using FlairTickets.Web.Models.IndexViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 
 namespace FlairTickets.Web.Controllers
@@ -66,6 +67,7 @@ namespace FlairTickets.Web.Controllers
                 try
                 {
                     await _dataUnit.Airports.CreateAsync(airport);
+                    return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateException ex)
                 {
@@ -79,7 +81,7 @@ namespace FlairTickets.Web.Controllers
                         return View(airport);
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                catch { }
             }
 
             ModelState.AddModelError(string.Empty, $"Could not create {nameof(Airport)}.");
@@ -110,16 +112,13 @@ namespace FlairTickets.Web.Controllers
                 try
                 {
                     await _dataUnit.Airports.UpdateAsync(airport);
+                    return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateConcurrencyException)
                 {
                     if (!await _dataUnit.Airports.ExistsAsync(airport.Id))
                     {
                         return AirportNotFound();
-                    }
-                    else
-                    {
-                        throw;
                     }
                 }
                 catch (DbUpdateException ex)
@@ -134,7 +133,7 @@ namespace FlairTickets.Web.Controllers
                         return View(airport);
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                catch { }
             }
 
             ModelState.AddModelError(string.Empty, $"Could not update {nameof(Airport)}.");
@@ -158,7 +157,27 @@ namespace FlairTickets.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            await _dataUnit.Airports.DeleteAsync(id);
+            try
+            {
+                await _dataUnit.Airports.DeleteAsync(id);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (DbUpdateException ex)
+            {
+                if (ex.InnerException is SqlException innerEx)
+                {
+                    if (innerEx.Message.Contains("FK_Flights_Airports_"))
+                    {
+                        TempData["LayoutMessage"] =
+                            "Could not delete Airport." +
+                            " There's at least one Flight depending on it.";
+                        return RedirectToAction(nameof(Index));
+                    }
+                }
+            }
+            catch { }
+
+            TempData["LayoutMessage"] = "Could not delete Airport.";
             return RedirectToAction(nameof(Index));
         }
 

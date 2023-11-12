@@ -1,4 +1,3 @@
-﻿using System;
 ﻿using System.Threading.Tasks;
 using FlairTickets.Web.Data.Entities;
 using FlairTickets.Web.Helpers.ControllerHelpers.Interfaces;
@@ -92,7 +91,7 @@ namespace FlairTickets.Web.Controllers
                 // Success.
                     return RedirectToAction(nameof(Details), new { id = ticketId });
             }
-                catch (Exception ex)
+                catch (DbUpdateException ex)
                 {
                     if (ex.InnerException.Message.Contains("Cannot insert duplicate key"))
                     {
@@ -100,6 +99,7 @@ namespace FlairTickets.Web.Controllers
                         return View(model);
                     }
                 }
+                catch { }
             }
 
             ModelState.AddModelError(string.Empty, $"Could not create {nameof(Ticket)}.");
@@ -153,7 +153,7 @@ namespace FlairTickets.Web.Controllers
                     if (!await _controllerHelper.Tickets.TicketExistsAsync(model.Id))
                         return TicketNotFound();
                     }
-                catch (Exception ex)
+                catch (DbUpdateException ex)
                     {
                     if (ex.InnerException.Message.Contains("Cannot insert duplicate key"))
                     {
@@ -161,6 +161,7 @@ namespace FlairTickets.Web.Controllers
                         return View(model);
                     }
                 }
+                catch { }
             }
 
             ModelState.AddModelError(string.Empty, $"Could not create {nameof(Ticket)}.");

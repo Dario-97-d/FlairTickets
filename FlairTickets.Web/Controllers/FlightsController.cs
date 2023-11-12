@@ -7,6 +7,7 @@ using FlairTickets.Web.Models.Flight;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 
 namespace FlairTickets.Web.Controllers
@@ -181,7 +182,26 @@ namespace FlairTickets.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            try
+            {
             await _controllerHelper.Flights.DeleteFlightAsync(id);
+            return RedirectToAction(nameof(Index));
+        }
+            catch (DbUpdateException ex)
+            {
+                if (ex.InnerException is SqlException innerEx)
+                {
+                    if (innerEx.Message.Contains("FK_Tickets_Flights_FlightId"))
+                    {
+                        TempData["LayoutMessage"] =
+                            "Could not delete Flight." +
+                            " There's at least one Ticket depending on it.";
+                        return RedirectToAction(nameof(Index));
+                    }
+                }
+            }
+            
+            TempData["LayoutMessage"] = "Could not delete Flight.";
             return RedirectToAction(nameof(Index));
         }
 

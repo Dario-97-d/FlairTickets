@@ -46,11 +46,6 @@ namespace FlairTickets.Web.Controllers
             var user = await _userHelper.GetUserByIdAsync(id);
             if (user == null) return EmployeeNotFound();
 
-            if (string.IsNullOrEmpty(user.PhoneNumber))
-            {
-                user.PhoneNumber = "n/a";
-            }
-
             return View(user);
         }
 
@@ -244,7 +239,7 @@ namespace FlairTickets.Web.Controllers
 
             await _userHelper.DeleteUserAsync(user);
 
-            TempData["Message"] = $"{user.ChosenName}'s account has been deleted.";
+            TempData["LayoutMessage"] = $"{user.ChosenName}'s account has been deleted.";
             return RedirectToAction(nameof(Index));
         }
 

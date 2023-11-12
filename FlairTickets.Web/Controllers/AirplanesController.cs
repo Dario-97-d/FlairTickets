@@ -6,6 +6,7 @@ using FlairTickets.Web.Models.IndexViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 
 namespace FlairTickets.Web.Controllers
@@ -64,6 +65,7 @@ namespace FlairTickets.Web.Controllers
                 try
                 {
                     await _dataUnit.Airplanes.CreateAsync(airplane);
+                    return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateException ex)
                 {
@@ -77,7 +79,7 @@ namespace FlairTickets.Web.Controllers
                         return View(airplane);
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                catch { }
             }
 
             ModelState.AddModelError(string.Empty, $"Could not create {nameof(Airplane)}.");
@@ -106,16 +108,13 @@ namespace FlairTickets.Web.Controllers
                 try
                 {
                     await _dataUnit.Airplanes.UpdateAsync(airplane);
+                    return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateConcurrencyException)
                 {
                     if (!await _dataUnit.Airplanes.ExistsAsync(airplane.Id))
                     {
                         return AirplaneNotFound();
-                    }
-                    else
-                    {
-                        throw;
                     }
                 }
                 catch (DbUpdateException ex)
@@ -130,7 +129,7 @@ namespace FlairTickets.Web.Controllers
                         return View(airplane);
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                catch { }
             }
 
             ModelState.AddModelError(string.Empty, $"Could not update {nameof(Airplane)}.");
@@ -154,7 +153,27 @@ namespace FlairTickets.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            await _dataUnit.Airplanes.DeleteAsync(id);
+            try
+            {
+                await _dataUnit.Airplanes.DeleteAsync(id);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (DbUpdateException ex)
+            {
+                if (ex.InnerException is SqlException innerEx)
+                {
+                    if (innerEx.Message.Contains("FK_Flights_Airplanes_AirplaneId"))
+                    {
+                        TempData["LayoutMessage"] =
+                            "Could not delete Airplane." +
+                            " There's at least one Flight depending on it.";
+                        return RedirectToAction(nameof(Index));
+                    }
+                }
+            }
+            catch { }
+
+            TempData["LayoutMessage"] = "Could not delete Airplane.";
             return RedirectToAction(nameof(Index));
         }
 
