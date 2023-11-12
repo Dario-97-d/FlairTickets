@@ -2,6 +2,7 @@
 using FlairTickets.Web.Data;
 using FlairTickets.Web.Data.Entities;
 using FlairTickets.Web.Models;
+using FlairTickets.Web.Models.IndexViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -21,9 +22,17 @@ namespace FlairTickets.Web.Controllers
 
 
         // GET: Airplanes
-        public IActionResult Index()
+        public async Task<IActionResult> Index(Airplane? searchModel)
         {
-            return View(_dataUnit.Airplanes.GetAll());
+            var indexModel = new AirplanesIndexViewModel
+            {
+                SearchModel = searchModel,
+                Airplanes = searchModel == null
+                    ? await _dataUnit.Airplanes.GetAll().ToListAsync()
+                    : await _dataUnit.Airplanes.GetSearchAsync(searchModel)
+            };
+
+            return View(indexModel);
         }
 
 

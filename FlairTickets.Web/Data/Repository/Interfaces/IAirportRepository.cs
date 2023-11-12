@@ -9,5 +9,6 @@ namespace FlairTickets.Web.Data.Repository.Interfaces
     {
         Task<IEnumerable<SelectListItem>> GetComboAirportsIataCodeAsync();
         Task<int> GetIdFromIataCodeAsync(string iataCode);
+        Task<IEnumerable<Airport>> GetSearchAsync(Airport searchModel);
     }
 }

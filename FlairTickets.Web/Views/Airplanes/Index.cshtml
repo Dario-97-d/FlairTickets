@@ -1,4 +1,4 @@
-﻿@model IEnumerable<FlairTickets.Web.Data.Entities.Airplane>
+﻿@model FlairTickets.Web.Models.IndexViewModels.AirplanesIndexViewModel
 
 @{
     ViewData["Title"] = "Airplanes";
@@ -9,24 +9,49 @@
 <p>
     <a asp-action="Create" class="btn btn-primary"><i class="fa fa-square-plus"></i> New Airplane</a>
 </p>
+
+<form id="SearchForm" method="GET">
+    <div class="row" style="margin: 8px; border: 2px solid gray; border-radius: 2px; padding: 12px; background-color: rgba(63, 191, 255, 0.1);">
+
+        <!-- Airplane Model -->
+        <div class="form-group col-md-3">
+            <label asp-for="SearchModel.Model" class="control-label"></label>
+            <input asp-for="SearchModel.Model" name="Model" class="form-control" />
+        </div>
+
+        <!-- Name of the Airplane -->
+        <div class="form-group col-md-3">
+            <label asp-for="SearchModel.Name" class="control-label"></label>
+            <input asp-for="SearchModel.Name" name="Name" class="form-control" />
+        </div>
+
+        <!-- Clear all __ See flights -->
+        <div class="row form-group" style="margin: auto">
+            <span onclick="$(this).closest('form').find('input').val('');" class="btn btn-light border"><i class="fa fa-eraser"></i> Clear all</span>
+            <button class="btn btn-primary"><i class="fa fa-search"></i> See airplanes</button>
+        </div>
+
+    </div>
+</form>
+
 <table class="table">
     <thead>
         <tr>
             <th><!-- icon --></th>
             <th>
-                @Html.DisplayNameFor(model => model.Model)
+                @Html.DisplayNameFor(model => model.SearchModel.Model)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Name)
+                @Html.DisplayNameFor(model => model.SearchModel.Name)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Seats)
+                @Html.DisplayNameFor(model => model.SearchModel.Seats)
             </th>
             <th><!-- actions --></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
+@foreach (var item in Model.Airplanes) {
         <tr>
             <td><i class="fa fa-plane-up"></i></td>
             <td>
@@ -46,3 +71,9 @@
 }
     </tbody>
 </table>
+
+@section Scripts{
+    @{
+        await Html.RenderPartialAsync("_RemoveUnusedInputsFromSearchUrl");
+    }
+}

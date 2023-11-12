@@ -1,9 +1,9 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using FlairTickets.Web.Data.Entities;
 using FlairTickets.Web.Helpers.Interfaces;
 using FlairTickets.Web.Models;
 using FlairTickets.Web.Models.Account;
+using FlairTickets.Web.Models.IndexViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -24,9 +24,17 @@ namespace FlairTickets.Web.Controllers
 
 
         // GET: EmployeesController
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(User? searchModel)
         {
-            return View(await _userHelper.GetAllInRoleAsync("Employee"));
+            var indexModel = new EmployeesIndexViewModel
+            {
+                SearchModel = searchModel,
+                Employees = searchModel == null
+                    ? await _userHelper.GetAllInRoleAsync("Employee")
+                    : await _userHelper.GetSearchInRoleAsync(searchModel, "Employee")
+            };
+
+            return View(indexModel);
         }
 
 
@@ -191,10 +199,10 @@ namespace FlairTickets.Web.Controllers
                             // Success.
 
                             ViewBag.Message =
-                            $"{model.ChosenName}'s email address has been updated, " +
-                            $"and a confirmation email with a link has been sent." +
-                            $" In order to access the account, " +
-                            $"{model.ChosenName} needs to activate it through that link.";
+                                $"{model.ChosenName}'s email address has been updated, " +
+                                $"and a confirmation email with a link has been sent." +
+                                $" In order to access the account, " +
+                                $"{model.ChosenName} needs to activate it through that link.";
 
                             return View(model);
                         }

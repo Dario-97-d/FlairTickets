@@ -66,6 +66,33 @@ namespace FlairTickets.Web.Helpers
             return await _userManager.GetUsersInRoleAsync(role);
         }
 
+        public async Task<IEnumerable<User>> GetSearchInRoleAsync(User searchModel,string role)
+        {
+            var employees = (await _userManager.GetUsersInRoleAsync(role)).AsEnumerable();
+
+            // Filter by Chosen name.
+            if (!string.IsNullOrEmpty(searchModel.ChosenName))
+                employees = employees.Where(employee =>
+                    employee.ChosenName.Contains(searchModel.ChosenName));
+
+            // Filter by Full name.
+            if (!string.IsNullOrEmpty(searchModel.FullName))
+                employees = employees.Where(employee =>
+                    employee.FullName.Contains(searchModel.FullName));
+
+            // Filter by Email.
+            if (!string.IsNullOrEmpty(searchModel.Email))
+                employees = employees.Where(employee =>
+                    employee.Email.Contains(searchModel.Email));
+
+            // Filter by Phone number.
+            if (!string.IsNullOrEmpty(searchModel.PhoneNumber))
+                employees = employees.Where(employee =>
+                    employee.PhoneNumber.Contains(searchModel.PhoneNumber));
+
+            return employees;
+        }
+
         public async Task<User> GetUserByEmailAsync(string email)
         {
             return await _userManager.FindByEmailAsync(email);

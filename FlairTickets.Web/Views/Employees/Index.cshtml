@@ -1,4 +1,4 @@
-﻿@model IEnumerable<FlairTickets.Web.Data.Entities.User>
+﻿@model FlairTickets.Web.Models.IndexViewModels.EmployeesIndexViewModel
 
 @{
     ViewData["Title"] = "Employees";
@@ -9,6 +9,43 @@
 <p>
     <a asp-action="Create" class="btn btn-primary"><i class="fa fa-user-plus"></i> Add Employee</a>
 </p>
+
+<form id="SearchForm" method="GET">
+    <div class="row" style="margin: 8px; border: 2px solid gray; border-radius: 2px; padding: 12px; background-color: rgba(63, 191, 255, 0.1);">
+
+        <!-- Chosen name -->
+        <div class="form-group col-md-3">
+            <label asp-for="SearchModel.ChosenName" class="control-label"></label>
+            <input asp-for="SearchModel.ChosenName" name="ChosenName" class="form-control" />
+        </div>
+
+        <!-- Full Name -->
+        <div class="form-group col-md-3">
+            <label asp-for="SearchModel.FullName" class="control-label"></label>
+            <input asp-for="SearchModel.FullName" name="FullName" class="form-control" />
+        </div>
+
+        <!-- Email -->
+        <div class="form-group col-md-3">
+            <label asp-for="SearchModel.Email" class="control-label"></label>
+            <input asp-for="SearchModel.Email" name="Email" class="form-control" />
+        </div>
+
+        <!-- PhoneNumber -->
+        <div class="form-group col-md-3">
+            <label asp-for="SearchModel.PhoneNumber" class="control-label"></label>
+            <input asp-for="SearchModel.PhoneNumber" name="PhoneNumber" class="form-control" />
+        </div>
+
+        <!-- Clear all __ See employees  -->
+        <div class="form-group" style="margin: auto">
+            <span onclick="$(this).closest('form').find('input').val('');" class="btn btn-light border"><i class="fa fa-eraser"></i> Clear all</span>
+            <button class="btn btn-primary"><i class="fa fa-search"></i> See employees</button>
+        </div>
+
+    </div>
+</form>
+
 <p class="text-warning">@TempData["Message"]</p>
 <table class="table">
     <thead>
@@ -23,7 +60,7 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model)
+        @foreach (var item in Model.Employees)
         {
             <tr>
                 <td><i class="fa fa-user"></i></td>
@@ -51,3 +88,9 @@
         }
     </tbody>
 </table>
+
+@section Scripts{
+    @{
+        await Html.RenderPartialAsync("_RemoveUnusedInputsFromSearchUrl");
+    }
+}

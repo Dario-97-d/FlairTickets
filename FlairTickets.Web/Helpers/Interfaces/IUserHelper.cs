@@ -16,6 +16,7 @@ namespace FlairTickets.Web.Helpers.Interfaces
         Task<string> GenerateEmailConfirmationTokenAsync(User user);
         Task<string> GeneratePasswordResetTokenAsync(User user);
         Task<IEnumerable<User>> GetAllInRoleAsync(string role);
+        Task<IEnumerable<User>> GetSearchInRoleAsync(User searchModel, string role);
         Task<User> GetUserByEmailAsync(string email);
         Task<User> GetUserByIdAsync(string id);
         Task<string> GetUserChosenNameAsync(string id);

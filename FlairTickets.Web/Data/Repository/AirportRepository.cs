@@ -38,5 +38,28 @@ namespace FlairTickets.Web.Data.Repository
                 .Select(a => a.Id)
                 .FirstOrDefaultAsync();
         }
+
+        public async Task<IEnumerable<Airport>> GetSearchAsync(Airport searchModel)
+        {
+            var airports = _context.Airports.AsNoTracking();
+
+            // Filter by IATA Code.
+            if (!string.IsNullOrEmpty(searchModel.IataCode))
+                airports = airports.Where(airport => airport.IataCode.Contains(searchModel.IataCode));
+
+            // Filter by Name.
+            if (!string.IsNullOrEmpty(searchModel.Name))
+                airports = airports.Where(airport => airport.Name.Contains(searchModel.Name));
+
+            // Filter by City.
+            if (!string.IsNullOrEmpty(searchModel.City))
+                airports = airports.Where(airport => airport.City.Contains(searchModel.City));
+
+            // Filter by Country.
+            if (!string.IsNullOrEmpty(searchModel.Country))
+                airports = airports.Where(airport => airport.Country.Contains(searchModel.Country));
+
+            return await airports.ToListAsync();
+        }
     }
 }
