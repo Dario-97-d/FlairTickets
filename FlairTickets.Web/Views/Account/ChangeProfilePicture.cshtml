@@ -1,0 +1,114 @@
+﻿@model FlairTickets.Web.Models.Account.ChangeProfilePictureViewModel
+
+@{
+    ViewData["Title"] = "Profile picture";
+}
+
+<div class="row">
+    <div class="col-md-6 offset-md-3">
+
+        <h2><i class="fa fa-image-portrait"></i> @ViewData["Title"]</h2>
+        <a asp-action="Index"><i class="fa fa-clipboard-user"></i> Account details</a>
+        <hr />
+
+        <form method="POST" enctype="multipart/form-data">
+
+            @* ModelState Error: feedback if update failed. *@
+            <div asp-validation-summary="ModelOnly"></div>
+
+            <!-- Profile Picture -->
+            <div class="mb-3">
+
+                <label class="form-label">Profile Picture</label>
+
+                <a href="#PhotoFile" onclick="resetPhoto()" id="resetPhoto" style="display: none;">(Reset photo)</a>
+
+                <div class="mb-3">
+                    <h1>
+                        @if (string.IsNullOrEmpty(Model.PhotoFullPath))
+                        {
+                            <img alt="Image preview" id="Photo" style="display: none; max-width: 256px; max-height: 256px; margin: 16px 8px 0;" />
+                            <i class="fa fa-circle-user" id="NoPhoto"></i>
+                        }
+                        else
+                        {
+                            <img src="@Model.PhotoFullPath" alt="Image preview" id="Photo" style="max-width: 256px; max-height: 256px; margin: 16px 8px 0;" />
+                            <i class="fa fa-circle-user" id="NoPhoto" style="display: none;"></i>
+                        }
+                    </h1>
+                </div>
+
+                @if (TempData["PhotoMessage"] != null)
+                {
+                    <p>@TempData["PhotoMessage"]</p>
+                }
+
+                <input type="file" asp-for="PhotoFile" class="form-control" onchange="uploadPhoto(event)" />
+
+                @if (Model.HasPhoto)
+                {
+                    <a href="#PhotoFile" onclick="deletePhoto()" id="deletePhoto" style="color: red;">(delete)</a>
+                    <input type="hidden" asp-for="DeletePhoto" />
+                }
+
+                <script>
+                    var anchorDeletePhoto = document.getElementById('deletePhoto');
+                    var inputDeletePhoto = document.getElementById('DeletePhoto');
+
+                    const uploadPhoto = event => {
+
+                        document.getElementById('Photo').src = URL.createObjectURL(event.target.files[0]);
+                        document.getElementById('Photo').style.display = 'inline-block';
+
+                        document.getElementById('NoPhoto').style.display = 'none';
+
+                        if (inputDeletePhoto != null) inputDeletePhoto.value = 'False';
+
+                        document.getElementById('resetPhoto').style.display = 'inline';
+                        if (anchorDeletePhoto != null) anchorDeletePhoto.style.display = 'inline';
+                    }
+
+                    const resetPhoto = () => {
+                        document.getElementById('PhotoFile').value = null;
+
+                        let alreadyHadPhoto = '@(!string.IsNullOrEmpty(Model.PhotoFullPath))';
+                        if (alreadyHadPhoto == 'True') {
+                            document.getElementById('Photo').src = '@Model.PhotoFullPath';
+                            document.getElementById('Photo').style.display = 'inline-block';
+                            document.getElementById('NoPhoto').style.display = 'none';
+                        }
+                        else {
+                            document.getElementById('Photo').style.display = 'none';
+                            document.getElementById('NoPhoto').style.display = 'inline';
+                        }
+
+                        if (inputDeletePhoto != null) inputDeletePhoto.value = 'False';
+
+                        document.getElementById('resetPhoto').style.display = 'none';
+                        if (anchorDeletePhoto != null) anchorDeletePhoto.style.display = 'inline';
+                    }
+
+                    const deletePhoto = () => {
+                        document.getElementById('PhotoFile').value = null;
+
+                        document.getElementById('Photo').style.display = 'none';
+                        document.getElementById('NoPhoto').style.display = 'inline';
+
+                        if (inputDeletePhoto != null) inputDeletePhoto.value = 'True';
+
+                        document.getElementById('resetPhoto').style.display = 'inline';
+                        if (anchorDeletePhoto != null) anchorDeletePhoto.style.display = 'none';
+                    }
+                </script>
+
+            </div>
+
+            <!-- Update -->
+            <div class="mb-3">
+                <input type="submit" asp-action="ChangeProfilePicture" value="Update" class="btn btn-primary" />
+            </div>
+
+        </form>
+
+    </div>
+</div>

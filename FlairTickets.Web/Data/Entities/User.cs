@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Identity;
 
 namespace FlairTickets.Web.Data.Entities
@@ -28,5 +29,7 @@ namespace FlairTickets.Web.Data.Entities
 
         [Display(Name = "Phone number")]
         public override string PhoneNumber { get => base.PhoneNumber; set => base.PhoneNumber = value; }
+
+        public Guid ProfilePictureGuid { get; set; }
     }
 }

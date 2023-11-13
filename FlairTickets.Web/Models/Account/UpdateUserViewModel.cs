@@ -25,5 +25,7 @@ namespace FlairTickets.Web.Models.Account
         [Display(Name = "Phone number")]
         [Required]
         public string PhoneNumber { get; set; }
+
+        public string PhotoFullPath { get; set; }
     }
 }

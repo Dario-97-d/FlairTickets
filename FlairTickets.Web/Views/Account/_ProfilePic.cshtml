@@ -1,0 +1,10 @@
+﻿@model string
+
+@if (string.IsNullOrEmpty(Model))
+{
+    <i class="fa fa-circle-user"></i>
+}
+else
+{
+    <img src="@Model" alt="Profile pic" style="max-width: 96px; max-height: 96px;" />
+}

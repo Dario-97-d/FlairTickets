@@ -7,8 +7,17 @@
 <div class="row">
     <div class="col-md-6 offset-md-3">
         
-        <h2><i class="fa fa-clipboard-user"></i> @ViewData["Title"]</h2>
-        <a asp-action="ChangePassword"><i class="fa fa-key"></i> Change password</a>
+        <div class="row">
+            <div class="col-md-8">
+                <h2><i class="fa fa-clipboard-user"></i> @ViewData["Title"]</h2>
+                <a asp-action="ChangePassword"><i class="fa fa-key"></i> Change password</a>
+            </div>
+            <div class="col-md-4">
+                <h2><partial name="_ProfilePic" for="PhotoFullPath" /></h2>
+                <a asp-action="ChangeProfilePicture"><i class="fa fa-image-portrait"></i> Profile picture</a>
+            </div>
+        </div>
+
         <hr />
 
         <form method="POST">
@@ -57,7 +66,7 @@
 
             <!-- Update account -->
             <div class="form-group">
-                <a asp-action="UpdateUser" class="btn btn-primary"><i class="fa fa-check"></i> Update account</a>
+                <button class="btn btn-primary"><i class="fa fa-check"></i> Update account</button>
             </div>
 
         </form>

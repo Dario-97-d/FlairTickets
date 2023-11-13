@@ -54,6 +54,7 @@ namespace FlairTickets.Web
 
             // Other helpers
             services.AddScoped<IHelpers, Helpers.Helpers>();
+            services.AddScoped<IBlobHelper, BlobHelper>();
             services.AddScoped<IConverterHelper, ConverterHelper>();
             services.AddScoped<IMailHelper, MailHelper>();
             services.AddScoped<IUserHelper, UserHelper>();

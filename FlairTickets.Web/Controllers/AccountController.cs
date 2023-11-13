@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using FlairTickets.Web.Data.Entities;
 using FlairTickets.Web.Helpers.Interfaces;
 using FlairTickets.Web.Models.Account;
@@ -9,11 +10,16 @@ namespace FlairTickets.Web.Controllers
 {
     public class AccountController : Controller
     {
+        private readonly IBlobHelper _blobHelper;
         private readonly IMailHelper _mailHelper;
         private readonly IUserHelper _userHelper;
 
-        public AccountController(IMailHelper mailHelper, IUserHelper userHelper)
+        public AccountController(
+            IBlobHelper blobHelper,
+            IMailHelper mailHelper,
+            IUserHelper userHelper)
         {
+            _blobHelper = blobHelper;
             _mailHelper = mailHelper;
             _userHelper = userHelper;
         }
@@ -49,6 +55,56 @@ namespace FlairTickets.Web.Controllers
             return View();
         }
 
+
+        public async Task<IActionResult> ChangeProfilePicture()
+        {
+            var photoGuid = await _userHelper.GetProfilePictureGuidAsync(User.Identity.Name);
+
+            var hasPhoto = photoGuid != Guid.Empty;
+
+            var model = new ChangeProfilePictureViewModel
+            {
+                HasPhoto = hasPhoto,
+                PhotoFullPath = hasPhoto
+                    ? "https://hybriotheca.blob.core.windows.net/userphotos/" + photoGuid
+                    : string.Empty,
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ChangeProfilePicture(ChangeProfilePictureViewModel model)
+        {
+            string changeMade = string.Empty;
+            
+            var user = await _userHelper.GetUserByEmailAsync(User.Identity.Name);
+
+            if (model.PhotoFile != null)
+            {
+                user.ProfilePictureGuid = await _blobHelper.UploadBlobAsync(model.PhotoFile, "userphotos");
+                changeMade = "The profile picture was saved.";
+            }
+
+            if (model.DeletePhoto && user.ProfilePictureGuid != Guid.Empty)
+            {
+                await _blobHelper.DeleteBlobAsync(user.ProfilePictureGuid.ToString(), "userphotos");
+                user.ProfilePictureGuid = Guid.Empty;
+                changeMade = "The profile picture was deleted.";
+            }
+
+            var updateUser = await _userHelper.UpdateUserAsync(user);
+            if (updateUser.Succeeded)
+            {
+                TempData["PhotoMessage"] = changeMade;
+                return RedirectToAction(nameof(ChangeProfilePicture));
+            }
+
+            ModelState.AddModelError(string.Empty, "Could not update profile picture");
+            return View(model);
+        }
+
+
         public async Task<IActionResult> ConfirmEmail(string userid, string token)
         {
             if (string.IsNullOrEmpty(userid) || string.IsNullOrEmpty(token))
@@ -70,6 +126,7 @@ namespace FlairTickets.Web.Controllers
             ViewBag.Message = "Could not confirm email.";
             return View();
         }
+
 
         public IActionResult ForgotPassword()
         {
@@ -117,6 +174,7 @@ namespace FlairTickets.Web.Controllers
             return View(nameof(ForgotPassword), model);
         }
 
+
         [Authorize]
         public async Task<IActionResult> Index()
         {
@@ -129,7 +187,10 @@ namespace FlairTickets.Web.Controllers
                     FullName = user.FullName,
                     Document = user.Document,
                     Address = user.Address,
-                    PhoneNumber = user.PhoneNumber
+                    PhoneNumber = user.PhoneNumber,
+                    PhotoFullPath = user.ProfilePictureGuid != Guid.Empty
+                        ? "https://hybriotheca.blob.core.windows.net/userphotos/" + user.ProfilePictureGuid.ToString()
+                        : string.Empty,
                 };
 
                 return View(model);
@@ -137,6 +198,7 @@ namespace FlairTickets.Web.Controllers
 
             return View();
         }
+
 
         public IActionResult Login()
         {
@@ -201,6 +263,7 @@ namespace FlairTickets.Web.Controllers
             return RedirectToHomePage();
         }
 
+
         public IActionResult Register()
         {
             if (User.Identity.IsAuthenticated) return RedirectToHomePage();
@@ -215,7 +278,7 @@ namespace FlairTickets.Web.Controllers
 
             if (ModelState.IsValid)
             {
-                // Check User already exists
+                // Check User already exists.
                 var user = await _userHelper.GetUserByEmailAsync(model.Email);
                 if (user == null)
                 {
@@ -270,6 +333,7 @@ namespace FlairTickets.Web.Controllers
             return View();
         }
 
+
         public IActionResult ResetPassword(string token)
         {
             if (User.Identity.IsAuthenticated) return RedirectToHomePage();
@@ -305,6 +369,7 @@ namespace FlairTickets.Web.Controllers
             ModelState.AddModelError(string.Empty, "Could not reset password.");
             return View(model);
         }
+
 
         [Authorize]
         [HttpPost]

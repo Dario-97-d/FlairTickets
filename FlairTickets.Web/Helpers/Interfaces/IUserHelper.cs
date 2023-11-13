@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using FlairTickets.Web.Data.Entities;
 using Microsoft.AspNetCore.Identity;
@@ -16,6 +17,7 @@ namespace FlairTickets.Web.Helpers.Interfaces
         Task<string> GenerateEmailConfirmationTokenAsync(User user);
         Task<string> GeneratePasswordResetTokenAsync(User user);
         Task<IEnumerable<User>> GetAllInRoleAsync(string role);
+        Task<Guid> GetProfilePictureGuidAsync(string userName);
         Task<IEnumerable<User>> GetSearchInRoleAsync(User searchModel, string role);
         Task<User> GetUserByEmailAsync(string email);
         Task<User> GetUserByIdAsync(string id);

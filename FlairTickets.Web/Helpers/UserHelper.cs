@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FlairTickets.Web.Data.Entities;
@@ -64,6 +65,14 @@ namespace FlairTickets.Web.Helpers
         public async Task<IEnumerable<User>> GetAllInRoleAsync(string role)
         {
             return await _userManager.GetUsersInRoleAsync(role);
+        }
+
+        public async Task<Guid> GetProfilePictureGuidAsync(string userName)
+        {
+            return await _userManager.Users
+                .Where(user => user.UserName == userName)
+                .Select(user => user.ProfilePictureGuid)
+                .FirstOrDefaultAsync();
         }
 
         public async Task<IEnumerable<User>> GetSearchInRoleAsync(User searchModel,string role)
