@@ -41,7 +41,7 @@ namespace FlairTickets.Web.Controllers
         }
 
         [Route("/Error/404")]
-        public IActionResult NotFound()
+        public new IActionResult NotFound()
         {
             return View();
         }
