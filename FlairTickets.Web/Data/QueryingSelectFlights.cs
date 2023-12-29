@@ -17,9 +17,9 @@ namespace FlairTickets.Web.Data
                 DateTime = string.Format("{0:d} {0:HH:mm}", flight.DateTime),
                 Number = flight.Number,
                 OriginAirport = flight.Origin.ComboName,
-                OriginCountryCode2Digit = flight.Origin.CountryCode2Letters,
+                OriginCountryCode2Letters = flight.Origin.CountryCode2Letters,
                 DestinationAirport = flight.Destination.ComboName,
-                DestinationCountryCode2Digit = flight.Destination.CountryCode2Letters,
+                DestinationCountryCode2Letters = flight.Destination.CountryCode2Letters,
                 Airplane = flight.Airplane.ComboName,
             }).SingleOrDefaultAsync();
         }
