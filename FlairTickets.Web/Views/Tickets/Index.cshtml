@@ -9,6 +9,15 @@
 <p>
     <a asp-controller="Home" class="btn btn-info"><i class="fa fa-search"></i> Search flights</a>
 </p>
+
+@if (User.IsInRole("Customer"))
+{
+    <div class="mb-3">
+        <a asp-action="History" class="btn btn-success">History</a>
+        <a asp-action="Booked" class="btn btn-primary">Booked</a>
+    </div>
+}
+
 <table class="table">
     <thead>
         <tr>

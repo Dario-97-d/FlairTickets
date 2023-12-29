@@ -6,6 +6,7 @@ using FlairTickets.Web.Data;
 using FlairTickets.Web.Helpers.ControllerHelpers.Interfaces;
 using FlairTickets.Web.Helpers.Interfaces;
 using FlairTickets.Web.Models.Ticket;
+using Microsoft.EntityFrameworkCore;
 
 namespace FlairTickets.Web.Helpers.ControllerHelpers
 {
@@ -61,6 +62,16 @@ namespace FlairTickets.Web.Helpers.ControllerHelpers
             await _dataUnit.Tickets.DeleteAsync(id);
         }
 
+        public async Task<IEnumerable<IndexRowTicketViewModel>> GetTicketsBookedAsync(string userName)
+        {
+            var query = _dataUnit.Tickets.GetAll()
+                .Where(ticket => ticket.User.UserName == userName)
+                .Where(ticket => EF.Functions.DateDiffMinute(ticket.Flight.DateTime, DateTime.UtcNow) < 0)
+                .OrderByDescending(ticket => ticket.Flight.DateTime);
+
+            return await QueryingSelectTickets.SelectListIndexRowViewModelAsync(query);
+        }
+
         public async Task<IEnumerable<IndexRowTicketViewModel>> GetTicketsForIndexAsync()
         {
             var query = _dataUnit.Tickets.GetAll()
@@ -76,6 +87,16 @@ namespace FlairTickets.Web.Helpers.ControllerHelpers
                 .Where(t => t.User.UserName == userName)
                 .OrderByDescending(t => t.Flight.DateTime)
                 .Take(25);
+
+            return await QueryingSelectTickets.SelectListIndexRowViewModelAsync(query);
+        }
+
+        public async Task<IEnumerable<IndexRowTicketViewModel>> GetTicketsHistoryAsync(string userName)
+        {
+            var query = _dataUnit.Tickets.GetAll()
+                .Where(ticket => ticket.User.UserName == userName)
+                .Where(ticket => EF.Functions.DateDiffMinute(ticket.Flight.DateTime, DateTime.UtcNow) > 0)
+                .OrderByDescending(ticket => ticket.Flight.DateTime);
 
             return await QueryingSelectTickets.SelectListIndexRowViewModelAsync(query);
         }

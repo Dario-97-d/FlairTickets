@@ -190,6 +190,21 @@ namespace FlairTickets.Web.Controllers
         }
 
 
+        [Authorize(Roles = "Customer")]
+        public async Task<IActionResult> History()
+        {
+            var tickets = await _controllerHelper.Tickets.GetTicketsHistoryAsync(User.Identity.Name);
+            return View(nameof(Index), tickets);
+        }
+
+        [Authorize(Roles = "Customer")]
+        public async Task<IActionResult> Booked()
+        {
+            var tickets = await _controllerHelper.Tickets.GetTicketsBookedAsync(User.Identity.Name);
+            return View(nameof(Index), tickets);
+        }
+
+
         public IActionResult FlightNotFound()
         {
             return RedirectToAction(nameof(FlightsController.FlightNotFound), "Flights");

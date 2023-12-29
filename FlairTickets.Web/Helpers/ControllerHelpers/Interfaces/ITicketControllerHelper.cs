@@ -9,8 +9,10 @@ namespace FlairTickets.Web.Helpers.ControllerHelpers.Interfaces
         Task<string> CheckTicketAsync(InputTicketViewModel model, string action);
         Task<int> CreateTicketAsync(InputTicketViewModel model);
         Task DeleteTicketAsync(int id);
+        Task<IEnumerable<IndexRowTicketViewModel>> GetTicketsBookedAsync(string userName);
         Task<IEnumerable<IndexRowTicketViewModel>> GetTicketsForIndexAsync();
         Task<IEnumerable<IndexRowTicketViewModel>> GetTicketsForIndexAsync(string userName);
+        Task<IEnumerable<IndexRowTicketViewModel>> GetTicketsHistoryAsync(string userName);
         Task<DisplayTicketViewModel> GetViewModelForDisplayAsync(int ticketId);
         Task<DisplayTicketViewModel> GetViewModelForDisplayAsync(int ticketId, string userName);
         Task<InputTicketViewModel> GetViewModelForInputCreateAsync(int flightId, string userName);
