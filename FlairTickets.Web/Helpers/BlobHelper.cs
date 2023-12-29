@@ -2,6 +2,7 @@
 using System.IO;
 using System.Threading.Tasks;
 using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
 using FlairTickets.Web.Helpers.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
@@ -49,6 +50,8 @@ namespace FlairTickets.Web.Helpers
             var container = _blobClient.GetBlobContainerClient(containerName);
 
             await container.CreateIfNotExistsAsync();
+
+            await container.SetAccessPolicyAsync(PublicAccessType.Blob);
 
             return container;
         }
