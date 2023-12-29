@@ -57,7 +57,10 @@ namespace FlairTickets.Web.Data.Repository
 
             // Filter by Country.
             if (!string.IsNullOrEmpty(searchModel.Country))
-                airports = airports.Where(airport => airport.Country.Contains(searchModel.Country));
+                airports = airports
+                    .Where(airport =>
+                        airport.Country.Contains(searchModel.Country)
+                        || airport.CountryCode2Letters == searchModel.Country.ToUpper());
 
             return await airports.ToListAsync();
         }

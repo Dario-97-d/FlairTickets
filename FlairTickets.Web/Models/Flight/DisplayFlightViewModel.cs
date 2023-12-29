@@ -10,7 +10,11 @@
 
         public string OriginAirport { get; set; }
 
+        public string OriginCountryCode2Letters { get; set; }
+
         public string DestinationAirport { get; set; }
+
+        public string DestinationCountryCode2Letters { get; set; }
 
         public string Airplane { get; set; }
     }

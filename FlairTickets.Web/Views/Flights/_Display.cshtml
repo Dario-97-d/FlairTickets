@@ -12,11 +12,11 @@
 
     <!-- Origin -->
     <dt class="col-sm-4"><i class="fa fa-plane-departure"></i> Origin</dt>
-    <dd class="col-sm-8">@Html.DisplayFor(model => model.OriginAirport)</dd>
+    <dd class="col-sm-8"><img src="https://flagsapi.com/@(Model.DestinationCountryCode2Letters)/shiny/32.png" /> @Html.DisplayFor(model => model.OriginAirport)</dd>
 
     <!-- Destination -->
     <dt class="col-sm-4"><i class="fa fa-plane-arrival"></i> Destination</dt>
-    <dd class="col-sm-8">@Html.DisplayFor(model => model.DestinationAirport)</dd>
+    <dd class="col-sm-8"><img src="https://flagsapi.com/@(Model.DestinationCountryCode2Letters)/shiny/32.png" /> @Html.DisplayFor(model => model.DestinationAirport)</dd>
 
     <!-- Airplane -->
     <dt class="col-sm-4"><i class="fa fa-plane-up"></i> Airplane</dt>

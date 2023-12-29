@@ -14,6 +14,10 @@
 
         public string Origin { get; set; }
 
+        public string OriginCountryCode2Letters { get; set; }
+
         public string Destination { get; set; }
+
+        public string DestinationCountryCode2Letters { get; set; }
     }
 }

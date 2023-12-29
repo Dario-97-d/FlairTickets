@@ -1,6 +1,8 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using FlairTickets.Web.Data;
 using FlairTickets.Web.Data.Entities;
+using FlairTickets.Web.Helpers.Interfaces;
 using FlairTickets.Web.Models;
 using FlairTickets.Web.Models.IndexViewModels;
 using Microsoft.AspNetCore.Authorization;
@@ -15,10 +17,14 @@ namespace FlairTickets.Web.Controllers
     public class AirplanesController : Controller
     {
         private readonly IDataUnit _dataUnit;
+        private readonly IHelpers _helpers;
 
-        public AirplanesController(IDataUnit dataUnit)
+        public AirplanesController(
+            IDataUnit dataUnit,
+            IHelpers helpers)
         {
             _dataUnit = dataUnit;
+            _helpers = helpers;
         }
 
 
@@ -46,13 +52,29 @@ namespace FlairTickets.Web.Controllers
         // POST: Airplanes/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Airplane airplane)
+        public async Task<IActionResult> Create(Airplane airplane, IFormFile photoFile)
         {
+            ModelState.Remove(nameof(Airplane.PhotoGuid));
+
+            if (photoFile == null)
+            {
+                ModelState.AddModelError(
+                    string.Empty,
+                    "The Airplane photo is required.");
+                return View(airplane);
+            }
+
             if (ModelState.IsValid)
             {
                 try
                 {
+                    // Upload and get Guid of photo.
+                    airplane.PhotoGuid = await _helpers.Blob.UploadBlobAsync(photoFile, "airplanes");
+
+                    // Create Airplane.
                     await _dataUnit.Airplanes.CreateAsync(airplane);
+
+                    // Success.
                     return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateException ex)
@@ -89,12 +111,25 @@ namespace FlairTickets.Web.Controllers
         // POST: Airplanes/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Airplane airplane)
+        public async Task<IActionResult> Edit(Airplane airplane, IFormFile photoFile)
         {
             if (ModelState.IsValid)
             {
                 try
                 {
+                    if (photoFile != null)
+                    {
+                        // Upload and get Guid.
+                        airplane.PhotoGuid = await _helpers.Blob.UploadBlobAsync(photoFile, "airplanes");
+
+                        // Delete old photo from blob container.
+                        var oldPhotoGuid = await _dataUnit.Airplanes.GetPhotoGuidAsync(airplane.Id);
+                        if (oldPhotoGuid != Guid.Empty)
+                        {
+                            await _helpers.Blob.DeleteBlobAsync(oldPhotoGuid.ToString(), "airplanes");
+                        }
+                    }
+
                     await _dataUnit.Airplanes.UpdateAsync(airplane);
                     return RedirectToAction(nameof(Index));
                 }
@@ -143,7 +178,15 @@ namespace FlairTickets.Web.Controllers
         {
             try
             {
+                // Delete photo from blob container.
+                var photoGuid = await _dataUnit.Airplanes.GetPhotoGuidAsync(id);
+                if (photoGuid != Guid.Empty)
+                {
+                    await _helpers.Blob.DeleteBlobAsync(photoGuid.ToString(), "airplanes");
+                }
+
                 await _dataUnit.Airplanes.DeleteAsync(id);
+
                 return RedirectToAction(nameof(Index));
             }
             catch (DbUpdateException ex)

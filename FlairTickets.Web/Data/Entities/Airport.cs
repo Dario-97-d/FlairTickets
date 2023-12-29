@@ -21,6 +21,11 @@ namespace FlairTickets.Web.Data.Entities
         [Required]
         public string Country { get; set; }
 
+        [Required]
+        [MaxLength(2)]
+        [MinLength(2)]
+        public string CountryCode2Digit { get; set; }
+
         public string ComboName => $"{City} ({IataCode})";
     }
 }
