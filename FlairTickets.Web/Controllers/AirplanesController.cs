@@ -37,18 +37,6 @@ namespace FlairTickets.Web.Controllers
         }
 
 
-        // GET: Airplanes/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null) return AirplaneNotFound();
-
-            var airplane = await _dataUnit.Airplanes.GetByIdAsync(id.Value);
-            if (airplane == null) return AirplaneNotFound();
-
-            return View(airplane);
-        }
-
-
         // GET: Airplanes/Create
         public IActionResult Create()
         {
