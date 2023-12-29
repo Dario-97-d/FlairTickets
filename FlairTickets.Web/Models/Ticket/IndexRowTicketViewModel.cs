@@ -12,7 +12,11 @@
 
         public string Origin { get; set; }
 
+        public string OriginCountryCode2Digit { get; set; }
+
         public string Destination { get; set; }
+
+        public string DestinationCountryCode2Digit { get; set; }
 
         public int Seat { get; set; }
 

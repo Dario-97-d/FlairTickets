@@ -78,7 +78,9 @@ namespace FlairTickets.Web.Helpers.ControllerHelpers
                     DateTime = string.Format("{0:d} {0:HH:mm}", f.DateTime),
                     Number = f.Number,
                     OriginAirport = f.Origin.ComboName,
+                    OriginCountryCode2Letters = f.Origin.CountryCode2Letters,
                     DestinationAirport = f.Destination.ComboName,
+                    DestinationCountryCode2Letters = f.Destination.CountryCode2Letters,
                     Airplane = f.Airplane.ComboName,
                 }).SingleOrDefaultAsync();
         }
@@ -255,7 +257,9 @@ namespace FlairTickets.Web.Helpers.ControllerHelpers
                     CompanyLogoUrl = "N/A",
                     FlightNumber = f.Number,
                     Origin = f.Origin.ComboName,
+                    OriginCountryCode2Letters = f.Origin.CountryCode2Letters,
                     Destination = f.Destination.ComboName,
+                    DestinationCountryCode2Letters = f.Origin.CountryCode2Letters,
                 }).ToListAsync();
         }
     }

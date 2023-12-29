@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using FlairTickets.Web.Data.Entities;
 using FlairTickets.Web.Helpers.Interfaces;
 using Microsoft.AspNetCore.Identity;
@@ -47,8 +48,20 @@ namespace FlairTickets.Web.Data
             {
                 var airplanes = new Airplane[]
                 {
-                    new Airplane { Model = "A320", Name = "Rambo", Seats = 150 },
-                    new Airplane { Model = "747-400", Name = "Jumbo", Seats = 416 },
+                    new Airplane
+                    {
+                        Model = "A320",
+                        Name = "Rambo",
+                        Seats = 150,
+                        PhotoGuid = Guid.Parse("d07d90c1-b8d6-4c8a-9fbe-b15550ef18b6"),
+                    },
+                    new Airplane
+                    {
+                        Model = "747-400",
+                        Name = "Jumbo",
+                        Seats = 416,
+                        PhotoGuid = Guid.Parse("c34b4081-c219-4c19-94ee-1b4bc01bcf19"),
+                    },
                 };
 
                 _context.Airplanes.AddRange(airplanes);
@@ -65,14 +78,16 @@ namespace FlairTickets.Web.Data
                         IataCode = "OPO",
                         Name = "Francisco Sá Carneiro",
                         City = "Porto",
-                        Country = "Portugal"
+                        Country = "Portugal",
+                        CountryCode2Letters = "PT",
                     },
                     new Airport
                     {
                         IataCode = "LIS",
                         Name = "Humberto Delgado",
                         City = "Lisboa",
-                        Country = "Portugal"
+                        Country = "Portugal",
+                        CountryCode2Letters = "PT",
                     }
                 };
 

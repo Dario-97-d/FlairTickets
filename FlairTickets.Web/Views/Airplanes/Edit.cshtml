@@ -9,8 +9,9 @@
 <h4><i class="fa fa-plane-up"></i> Airplane</h4>
 <hr />
 <div class="row">
+
     <div class="col-md-4">
-        <form asp-action="Edit">
+        <form asp-action="Edit" enctype="multipart/form-data">
 
             @* ModelState Errors. *@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -39,6 +40,23 @@
                 <span asp-validation-for="Seats" class="text-danger"></span>
             </div>
 
+            <!-- Photo -->
+            <div class="mb-3">
+                <label asp-for="PhotoGuid" class="control-label"></label>
+                <!-- File input -->
+                <div class="custom-file">
+                    <input type="file" class="custom-file-input" id="fileInput" name="photoFile" onchange="showPreview(event)" />
+                    <label class="custom-file-label" for="fileInput">New photo?</label>
+                </div>
+                <!-- Show preview script -->
+                <script>
+                    const showPreview = (event) => {
+                        $('#Photo').attr('src', URL.createObjectURL(event.target.files[0]));
+                        $('#Photo').css('display', 'block');
+                    }
+                </script>
+            </div>
+
             <hr />
 
             <!-- Save -->
@@ -48,8 +66,23 @@
 
         </form>
     </div>
+
+    <div class="col-md-8">
+        <!-- Image preview -->
+        <img src="@Model.PhotoUrl" alt="Image preview not available" id="Photo" class="mb-3" style="max-width: 256px; max-height: 256px;" />
+    </div>
+
 </div>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        $(document).ready(function () {
+            $('#fileInput').change(function () {
+                var fileName = $(this).val().split('\\').pop(); // Get the file name without the path
+                $('.custom-file-label').html(fileName);
+                $('#selectedFileName').html(fileName);
+            });
+        });
+    </script>
 }

@@ -29,9 +29,11 @@
                     @Html.DisplayFor(modelItem => item.FlightNumber)
                 </td>
                 <td>
+                    <img src="https://flagsapi.com/@(item.OriginCountryCode2Letters)/shiny/32.png">
                     @Html.DisplayFor(modelItem => item.Origin)
                 </td>
                 <td>
+                    <img src="https://flagsapi.com/@(item.DestinationCountryCode2Letters)/shiny/32.png">
                     @Html.DisplayFor(modelItem => item.Destination)
                 </td>
                 <td>

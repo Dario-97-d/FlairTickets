@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FlairTickets.Web.Data.Entities;
@@ -16,6 +17,14 @@ namespace FlairTickets.Web.Data.Repository
             _context = context;
         }
 
+
+        public async Task<Guid> GetPhotoGuidAsync(int airplaneId)
+        {
+            return await _context.Airplanes
+                .Where(airplane => airplane.Id == airplaneId)
+                .Select(airplane => airplane.PhotoGuid)
+                .FirstOrDefaultAsync();
+        }
 
         public async Task<IEnumerable<Airplane>> GetSearchAsync(Airplane searchModel)
         {
